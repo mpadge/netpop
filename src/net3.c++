@@ -1,9 +1,8 @@
 /*
  * diff_sim3.cc
  *
- * Simulates a linear network of three nodes
+ * Simulates a triangular network of three nodes
  */
-
 
 #include "net3.h"
 
@@ -19,7 +18,7 @@
 int main (int argc, char *argv[])
 {
     int netcount, nRepeats;
-    double tempd, progress, conn_mn, nmn_node [5], nsd_node [5], nmn_net, nsd_net;
+    double tempd, progress, conn_mn, nmn_node [4], nsd_node [4], nmn_net, nsd_net;
     Parameters pars;
     Results results;
     std::string fname;
@@ -154,7 +153,7 @@ int main (int argc, char *argv[])
         for (int j=0; j<nRepeats; j++) 
         {
             results = runPop (pars, &generator);
-            if (results.nmn_network > dnix) 
+            if (results.nmn_network > DOUBLE_MIN) 
             {
                 netcount++;
                 conn_mn += results.connectivity;
@@ -178,14 +177,14 @@ int main (int argc, char *argv[])
             nmn_net = nmn_net / (double) netcount;
             nsd_net = nsd_net / (double) netcount;
         } else {
-            conn_mn = dnix;
+            conn_mn = DOUBLE_MIN;
             for (int j=0; j<4; j++) 
             {
-                nmn_node [j] = dnix;
-                nsd_node [j] = dnix;
+                nmn_node [j] = DOUBLE_MIN;
+                nsd_node [j] = DOUBLE_MIN;
             }
-            nmn_net = dnix;
-            nsd_net = dnix;
+            nmn_net = DOUBLE_MIN;
+            nsd_net = DOUBLE_MIN;
         }
         out_file << ",\t" << conn_mn;
         for (int j=0; j<4; j++) 
@@ -199,6 +198,7 @@ int main (int argc, char *argv[])
         out_file << std::endl;
         //std::cout << "."; std::cout.flush();
 
+        /*
         progress = 100.0 * (double) i / 100.0;
         std::cout << "\r[" << i << "]; progress = " << progress << "% after ";
         tempd = ((double) clock () - (double) time_start) / 
@@ -209,6 +209,9 @@ int main (int argc, char *argv[])
         timeout (tempd);
         //std::cout << std::endl;
         std::cout.flush();
+        */
+        progress = (double) i / 100.0;
+        progLine (progress, 0);
     } // end for i
     out_file.close();
     std::cout << std::endl << std::endl;
@@ -409,11 +412,11 @@ Results runPop (Parameters pars, base_generator_type * generator)
     {
         for (int i=0; i<4; i++) 
         {
-            results.nmn_node [i] = dnix;
-            results.nsd_node [i] = dnix;
+            results.nmn_node [i] = DOUBLE_MIN;
+            results.nsd_node [i] = DOUBLE_MIN;
         }
-        results.nmn_network = dnix;
-        results.nsd_network = dnix;
+        results.nmn_network = DOUBLE_MIN;
+        results.nsd_network = DOUBLE_MIN;
     } else {
         results.nmn_node [3] = 0.0;
         results.nsd_node [3] = 0.0;
@@ -433,30 +436,3 @@ Results runPop (Parameters pars, base_generator_type * generator)
 
     return results;
 }
-
-
-void timeout(double tseconds)
-{
-    int hh = floor (tseconds / 3600.0);
-    if (hh == 0) 
-        std::cout << "00:";
-    else if (hh < 10) 
-        std::cout << "0" << hh << ":";
-    else 
-        std::cout << hh << ":";
-    double trem = tseconds - (double) hh * 3600.0;
-    int mm = floor (trem / 60.0);
-    if (mm == 0) 
-        std::cout << "00:";
-    else if (mm < 10) 
-        std::cout << "0" << mm << ":";
-    else 
-        std::cout << mm << ":";
-    double ss = trem - (double) mm * 60.0;
-    if (ss == 0.0) 
-        std::cout << "00:";
-    else if (ss < 10) 
-        std::cout << "0" << ss;
-    else 
-        std::cout << ss;
-} // end function timeout

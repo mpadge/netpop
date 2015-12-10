@@ -185,7 +185,7 @@ int main (int argc, char *argv[])
             for (int k=0; k<nRepeats; k++) 
             {
                 results = runPop (pars, j, &generator);
-                if (results.nmn_network > dnix) 
+                if (results.nmn_network > DOUBLE_MIN) 
                 {
                     netcount++;
                     conn_mn += results.connectivity;
@@ -209,14 +209,14 @@ int main (int argc, char *argv[])
                 nmn_net = nmn_net / (double) netcount;
                 nsd_net = nsd_net / (double) netcount;
             } else {
-                conn_mn = dnix;
+                conn_mn = DOUBLE_MIN;
                 for (int k=0; k<5; k++) 
                 {
-                    nmn_node [k] = dnix;
-                    nsd_node [k] = dnix;
+                    nmn_node [k] = DOUBLE_MIN;
+                    nsd_node [k] = DOUBLE_MIN;
                 }
-                nmn_net = dnix;
-                nsd_net = dnix;
+                nmn_net = DOUBLE_MIN;
+                nsd_net = DOUBLE_MIN;
             }
             out_file << ",\t" << conn_mn;
             for (int k=0; k<5; k++) 
@@ -863,11 +863,11 @@ Results runPop (Parameters pars, int network_type, base_generator_type * generat
     {
         for (int i=0; i<5; i++) 
         {
-            results.nmn_node [i] = dnix;
-            results.nsd_node [i] = dnix;
+            results.nmn_node [i] = DOUBLE_MIN;
+            results.nsd_node [i] = DOUBLE_MIN;
         }
-        results.nmn_network = dnix;
-        results.nsd_network = dnix;
+        results.nmn_network = DOUBLE_MIN;
+        results.nsd_network = DOUBLE_MIN;
     } else {
         results.nmn_node [4] = 0.0;
         results.nsd_node [4] = 0.0;
@@ -887,104 +887,3 @@ Results runPop (Parameters pars, int network_type, base_generator_type * generat
 
     return results;
 }
-
-
-void timeout(double tseconds)
-{
-    int hh = floor (tseconds / 3600.0);
-    if (hh == 0) 
-        std::cout << "00:";
-    else if (hh < 10) 
-        std::cout << "0" << hh << ":";
-    else 
-        std::cout << hh << ":";
-    double trem = tseconds - (double) hh * 3600.0;
-    int mm = floor (trem / 60.0);
-    if (mm == 0) 
-        std::cout << "00:";
-    else if (mm < 10) 
-        std::cout << "0" << mm << ":";
-    else 
-        std::cout << mm << ":";
-    double ss = trem - (double) mm * 60.0;
-    if (ss == 0.0) 
-        std::cout << "00:";
-    else if (ss < 10) 
-        std::cout << "0" << ss;
-    else 
-        std::cout << ss;
-} // end function timeout
-
-/* R script to plot results
-junk <- function (minalpha=0.1, nfiles=100)
-{
-setwd ("/data/Documents/analyses/Fish Barriers/c++/diffusion/results/")
-dat0 <- read.csv ("aaasim4_results_basic_ksd02.txt", header=TRUE)
-setwd ("/data/Documents/analyses/Fish Barriers/c++/diffusion/")
-indx <- which (dat0$alpha >= minalpha)
-dat0 <- dat0 [indx, ]
-alpha <- dat0$alpha
-nsd0 <- cbind (dat0$sd0net, dat0$sd1net, dat0$sd2net, dat0$sd3net)
-
-lf <- list.files()
-
-r2 <- array (NA, dim=c(nfiles, 4))
-r2alpha <- r2
-for (i in 1:nfiles) {
-	if (i < 10) {
-		fname <- paste ("aaasim4_results_ksd02_k0sd00", i, "_alphasd00", i, ".txt", sep="")
-	}
-	else if (i < 100) {
-		fname <- paste ("aaasim4_results_ksd02_k0sd0", i, "_alphasd0", i, ".txt", sep="")
-	}
-	else {
-		fname <- paste ("aaasim4_results_ksd02_k0sd", i, "_alphasd", i, ".txt", sep="")
-	}
-	if (fname %in% lf) {
-		dat <- read.csv (fname, header=TRUE)
-		dat <- dat [indx, ]
-		nsd <- cbind (dat$sd0net, dat$sd1net, dat$sd2net, dat$sd3net)
-		for (j in 1:4) {
-			r2 [i, j] <- cor (nsd0 [,j], nsd [,j])
-			r2alpha [i, j] <- cor (alpha, nsd [,j])
-			}
-		maxi <- i
-	}
-	else {
-		maxi <- i - 1
-		break	}
-}
-r2 <- r2 [1:maxi, ]
-r2alpha <- r2alpha [1:maxi, ]
-r2 <- sign (r2) * r2 ^ 2
-r2alpha <- sign (r2alpha) * r2alpha ^ 2
-
-yvals <- list ()
-yvals [[1]] <- r2
-yvals [[2]] <- r2alpha
-ylims <- list ()
-ylims [[1]] <- range (yvals [[1]], na.rm=TRUE)
-ylims [[2]] <- range (yvals [[2]], na.rm=TRUE)
-mts <- c ("Correlation with nework pattern", "Correlation with alpha")
-
-x11 (width = 10, height = 5)
-par (mfrow = c(1, 2), mar = c(2, 2, 1.5, 0.5), mgp = c(1, 0.3, 0), ps=10)
-x <- (1:maxi) / 1000
-cols <- c ("red", "orange", "lawngreen", "blue")
-for (i in 1:2) {
-	plot (x, yvals [[i]] [,1], "l", col=cols [1], ylim=ylims [[i]],
-		xlab="SD", ylab="R2", main=mts [i])
-	lines (c(-1, 100), c(0, 0), col="grey", lty=2)
-	for (j in 1:4) {
-		lines (x, yvals [[i]] [,j], col=cols [j])
-		#points (x, r2 [,i], pch=20, col=cols [i])
-		}
-	if (i == 1) {
-		xpos <- min (x) + 0.7 * diff (range (x))
-		legend (xpos, ylims [[i]] [2], lwd=1, col=cols, bty="n",
-			legend=c("A: Line", "B: Star", "C: Circle", "D: Star+"))
-		}
-	}
-}
-junk()
-*/

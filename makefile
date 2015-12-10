@@ -3,8 +3,8 @@ CXX=clang++-3.5
 CFLAGS=-c -std=c++11 
 LIBS=-lboost_program_options
 VPATH=./src
-OBJECTS3 = net3.o
-OBJECTS4 = net4.o
+OBJECTS3 = utils.o net3.o
+OBJECTS4 = utils.o net4.o
 
 all: net3 net4
 
