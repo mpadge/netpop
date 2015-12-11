@@ -43,7 +43,10 @@
 class Network
 {
     private:
-        static const int nnodes = 3, maxTrials = 100;
+        static constexpr int nnodes = 3, maxTrials = 100, runin = 100;
+        static constexpr double minqc = 0.001;
+        // minqc is important to prevent dividing by sometimes *really* small
+        // numbers
     public:
         double k0 [nnodes], alpha [nnodes] [nnodes], pmat [nnodes] [nnodes];
         std::string filename = "aaasim3_results_r"; 
@@ -72,7 +75,6 @@ class Network
 
         Network ()
         {
-            get_filename ();
         }
         ~Network ()
         {
@@ -83,21 +85,3 @@ class Network
         void make_pmat (base_generator_type * generator);
         void iterate_population (base_generator_type * generator);
 };
-
-struct Parameters 
-{
-    int nTrials;
-    double k0, k0sd, ksd, alpha0, alphasd, r;
-};
-
-struct Results 
-{
-    double connectivity, nmn_node [4], nsd_node [4], nmn_network, nsd_network, 
-           cov [3] [3];
-};
-
-Results runPop (Parameters pars, base_generator_type * generator);
-
-const int runin = 100;
-const double minqc = 0.001;
-// minqc is important to prevent dividing by sometimes *really* small numbers
