@@ -20,13 +20,12 @@
 
 int main (int argc, char *argv[])
 {
-	double dtemp;
-	bool flag;
+	double dtemp, progress;
 	std::string fname;
 	Parameters params;
 	NetResults results;
 	time_t seed;
-	clock_t ctimer [2];
+	clock_t time_start;
 	std::ofstream out_file;
 	std::ifstream in_file; // For reading previous data and filling the varcheck table
 	std::string linetxt;
@@ -35,7 +34,7 @@ int main (int argc, char *argv[])
 	time (&seed);
 	generator.seed (static_cast <unsigned int> (seed));
 
-	ctimer [0] = clock();
+	time_start = clock();
 	//	Output formatting stuff ...
 	//std::cout.setf(0,ios::floatfield);            // floatfield not set
 	std::cout.setf (std::ios::fixed, std::ios::floatfield);   // floatfield set to fixed
@@ -153,7 +152,6 @@ int main (int argc, char *argv[])
 	out_file.open (fname.c_str(), std::ofstream::out);
 	out_file << "alpha,\tconn,\tdiffq,\tradius,\tnloops,\tedgelength,\t" <<
 		"n1,\tn2,\tn3,\tn4,\tn5,\tn6,\tn7,\tn8,\tnmn,\tnsd" << std::endl;
-	flag = false;
 	for (int i=0; i<params.nTrials; i++)
     {
 		results = do1trial (params, &generator, &varcheck);
@@ -167,34 +165,12 @@ int main (int argc, char *argv[])
 			out_file << results.N_mn [j] << ",\t" << results.N_sd [j] << std::endl;
 		} // end for j
 
-		dtemp = 100.0 * (double) i / (double) params.nTrials;
-		std::cout << "\rlatt: " << i << " / " << params.nTrials << 
-            " = " << dtemp << "%";
-		if (flag)
-        {
-			ctimer [1] = clock();
-			dtemp = ((double) ctimer [1] - (double) ctimer [0]) 
-                / (double) CLOCKS_PER_SEC;
-			std::cout << "; [Elapsed, Each, Remaining] time = [";
-			timeout (dtemp);
-			dtemp = dtemp / (double) i;
-			std::cout << ", ";
-			timeout (dtemp);
-			dtemp = dtemp * ((double) params.nTrials - (double) i);
-			std::cout << ", ";
-			timeout (dtemp);
-			std::cout << "]";
-		}
-		std::cout.flush ();
-		flag = true;
+        dtemp = ((double) clock () - (double) time_start) / 
+            (double) CLOCKS_PER_SEC;
+        progress = (double) i / (double) params.nTrials;
+        progLine (dtemp, progress);
 	} // end for i
 	out_file.close();
-	std::cout << std::endl;
-	dtemp = ((double) clock () - (double) ctimer [0]) / 
-        (double) CLOCKS_PER_SEC;
-	std::cout << "Calculation time = ";
-	timeout (dtemp);
-	std::cout << std::endl << std::endl;
 
 	return 0;
 } // end main

@@ -31,9 +31,8 @@ std::vector <int> randseq (int n, base_generator_type * generator)
 	std::vector <int> vecout;
 	std::vector <std::pair <double, int> >::const_iterator itr;
 	for (itr = junkvec.begin(); itr < junkvec.end(); itr++)
-    {
 		vecout.push_back (itr -> second);
-	}
+	
 	return(vecout);
 } // end function randseq
 
@@ -144,53 +143,16 @@ ivec sort(ivec sortvec, int veclen)
 	int tempi;
 
 	for(int i=0; i<veclen; i++) 
-    {
 		for (int j=(i + 1); j<veclen; j++)	
-        {
 			if (sortvec(j) < sortvec(i)) 
             {
 				tempi = sortvec(i);
 				sortvec(i) = sortvec(j);
 				sortvec(j) = tempi;
 			}
-		} // end for j
-	} // end for i
+
 	return sortvec;
 } // end function sort
-
-/************************************************************************
- ************************************************************************
- **                                                                    **
- **                          TIMEOUT FUNCTION                          **
- **                                                                    **
- ************************************************************************
- ************************************************************************/
-
-void timeout(double tseconds)
-{
-	int hh = floor(tseconds / 3600.0);
-	if (hh == 0) 
-        std::cout << "00:";
-	else if (hh < 10) 
-        std::cout << "0" << hh << ":";
-	else 
-        std::cout << hh << ":";
-	double trem = tseconds - (double) hh * 3600.0;
-	int mm = floor(trem / 60.0);
-	if (mm == 0) 
-        std::cout << "00:";
-	else if (mm < 10) 
-        std::cout << "0" << mm << ":";
-	else 
-        std::cout << mm << ":";
-	double ss = trem - (double) mm * 60.0;
-	if (ss == 0.0) 
-        std::cout << "00:";
-	else if (ss < 10) 
-        std::cout << "0" << ss;
-	else 
-        std::cout << ss;
-} // end function timeout
 
 
 /************************************************************************

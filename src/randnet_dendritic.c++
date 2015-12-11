@@ -18,13 +18,12 @@
 int main (int argc, char *argv[])
 {
     int tempi;
-	double dtemp;
-	bool flag;
+	double dtemp, progress;
 	std::string fname;
 	Parameters params;
 	NetResults results;
 	time_t seed;
-	clock_t ctimer [2];
+	clock_t time_start;
 	std::ofstream out_file;
 	std::ifstream in_file; 
     // in_file is for reading previous data and filling the varcheck table
@@ -34,7 +33,6 @@ int main (int argc, char *argv[])
 	time (&seed);
 	generator.seed (static_cast <unsigned int> (seed));
 
-	ctimer [0] = clock();
 	//	Output formatting stuff ...
 	//cout.setf(0,ios::floatfield); 
 	std::cout.setf (std::ios::fixed, std::ios::floatfield);   
@@ -100,6 +98,8 @@ int main (int argc, char *argv[])
 	else 
         params.directed = true;
 
+    time_start = clock ();
+
     params.nnodes = 25;
     // File names for these versions have an extra "_pinv" inserted just below,
     // while the direct one is multiplied by 2 to generate pscale values of
@@ -164,7 +164,6 @@ int main (int argc, char *argv[])
 	out_file.open (fname.c_str(), std::ofstream::out);
 	out_file << "alpha,\tconn,\tdiffq,\tradius,\tedgelength" <<
         ",\tn1,\tn2,\tn3,\tnmn,\tnsd,\t" << std::endl;
-	flag = false;
 	for (int i=0; i<params.nTrials; i++)
     {
 		for (int j=0; j<nradii; j++)
@@ -184,35 +183,14 @@ int main (int argc, char *argv[])
                     results.N_sd [k] << ",\t" << std::endl;
 			}
 
-			dtemp = 100.0 * ((double) i * (double) nradii + (double) j) /
-				((double) params.nTrials * (double) nradii);
-			std::cout << "\rdend: [" << i << ", " << j << "] / " <<
-				nradii * params.nTrials << " = " << dtemp << "%";
-			if (flag) 
-            {
-                // Because calling the timer when everything is zero produces junk
-				ctimer [1] = clock();
-				dtemp = ((double) ctimer [1] - (double) ctimer [0]) / 
-                    (double) CLOCKS_PER_SEC;
-				std::cout << "; [Elapsed, Each, Remaining] time = [";
-				timeout (dtemp);
-				dtemp = dtemp / ((double) i * (double) nradii + (double) j);
-				std::cout << ", "; timeout (dtemp);
-				dtemp = dtemp * ((double) params.nTrials * (double) nradii - 
-                        (double) i * (double) nradii + (double) j);
-				std::cout << ", "; timeout(dtemp); 
-				std::cout << "]";
-			}
-			std::cout.flush ();
-			flag = true;
+            dtemp = ((double) clock () - (double) time_start) / 
+                (double) CLOCKS_PER_SEC;
+            progress = ((double) i * (double) nradii + (double) j) /
+                ((double) params.nTrials * (double) nradii);
+            progLine (dtemp, progress);
 		} // end for j
 	} // end for i
 	out_file.close();
-	std::cout << std::endl;
-	dtemp = ((double) clock () - (double) ctimer [0]) / (double) CLOCKS_PER_SEC;
-	std::cout << "Calculation time = ";
-	timeout (dtemp);
-	std::cout << std::endl << std::endl;
 
 	return 0;
 } // end main

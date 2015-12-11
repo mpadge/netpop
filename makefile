@@ -1,4 +1,3 @@
-if [[-z "$CXX"]]; then CXX='c++'
 CXX=clang++-3.5
 CFLAGS=-c -std=c++11 
 LIBS=-lboost_program_options
