@@ -40,29 +40,6 @@
 
 #include "utils.h"
 
-void progLine (double progress, double tseconds)
-{
-    // progress bar with progress in [0,1] and prefix integer [nc] and elapsed
-    // time [tseconds]
-    struct winsize w;
-    ioctl (0, TIOCGWINSZ, &w); 
-    int ncols = w.ws_col; // Number of columns in console
-    ncols -= 10;
-
-    int barlen = ncols - 20;
-    int proglen = floor (barlen * progress);
-    int gaplen = barlen - proglen;
-
-    std::string time_taken = get_time (tseconds);
-    std::cout << "[" << time_taken << "] |";
-    for (int i=0; i<proglen; i++) 
-        std::cout << "-";
-    for (int i=0; i<gaplen; i++) 
-        std::cout << " ";
-    std::cout << "| " << (int) floor (progress * 100.0) << "%\r";
-    std::cout.flush ();
-}
-
 std::string get_time (double tseconds)
 {
     std::stringstream sstr;
@@ -93,3 +70,34 @@ std::string get_time (double tseconds)
 
     return (sstr.str ());
 } // end function timeout
+
+void progLine (double progress, double tseconds)
+{
+    std::string time_taken = get_time (tseconds);
+    double tempd = (tseconds / progress) * (1.0 - progress);
+    std::string time_rem = get_time (tempd);
+
+    // Line is only for linux; otherwise just a simple timer
+#ifdef __linux
+    // progress bar with progress in [0,1] and prefix integer [nc] and elapsed
+    // time [tseconds]
+    struct winsize w;
+    ioctl (0, TIOCGWINSZ, &w); 
+    int ncols = w.ws_col; // Number of columns in console
+    ncols -= 10;
+
+    int barlen = ncols - 20;
+    int proglen = floor (barlen * progress);
+    int gaplen = barlen - proglen;
+
+    std::cout << "[" << time_taken << "] |";
+    for (int i=0; i<proglen; i++) 
+        std::cout << "-";
+    for (int i=0; i<gaplen; i++) 
+        std::cout << " ";
+    std::cout << "| " << (int) floor (progress * 100.0) << "%\r";
+    std::cout.flush ();
+#elif
+    std::cout << "[" << time_taken << " / " << time_rem << "]" << std::endl;
+#endif
+}

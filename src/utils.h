@@ -81,7 +81,7 @@ const double DOUBLE_MAX = std::numeric_limits<double>::max (),
     DOUBLE_MIN = -DOUBLE_MAX,
     FLOAT_MAX = std::numeric_limits <float>::max ();
 
-void progLine (double progress, double tseconds);
 std::string get_time (double tseconds);
+void progLine (double progress, double tseconds);
 
 #endif
