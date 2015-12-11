@@ -80,6 +80,8 @@ class Network
         {
         }
 
+        int get_nnodes () { return nnodes;  }
+
         void get_filename ();
         void fill_alpha (base_generator_type * generator);
         void make_pmat (base_generator_type * generator);

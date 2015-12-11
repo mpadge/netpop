@@ -1,4 +1,3 @@
-// 0.28 & 0.57
 /***************************************************************************
  *  Project:    netpop
  *  File:       net3.h
@@ -119,6 +118,7 @@ int main (int argc, char *argv[])
         return 1;
     }    
     net.get_filename ();
+    int nnodes = net.get_nnodes (); // == 3
 
     std::cout << "nTrials for each alpha = " << net.pars.nTrials <<
         "; with results averaged over " << net.pars.nRepeats << 
@@ -145,7 +145,7 @@ int main (int argc, char *argv[])
     {
         net.pars.alpha0 = (double) i / 100.0;
         out_file << net.pars.alpha0;
-        for (int k=0; k<4; k++) 
+        for (int k=0; k<(nnodes + 1); k++) 
         {
             net.results.nmn_node [k] = 0.0;
             net.results.nsd_node [k] = 0.0;
@@ -164,7 +164,7 @@ int main (int argc, char *argv[])
             {
                 netcount++;
                 net.results.conn_mn += net.results1.connectivity;
-                for (int k=0; k<4; k++) 
+                for (int k=0; k<(nnodes + 1); k++) 
                 {
                     net.results.nmn_node [k] += net.results1.nmn_node [k];
                     net.results.nsd_node [k] += net.results1.nsd_node [k];
@@ -176,7 +176,7 @@ int main (int argc, char *argv[])
         if (netcount > 0) 
         {
             net.results.conn_mn = net.results.conn_mn / (double) netcount;
-            for (int j=0; j<4; j++) 
+            for (int j=0; j<(nnodes + 1); j++) 
             {
                 net.results.nmn_node [j] = net.results.nmn_node [j] / (double) netcount;
                 net.results.nsd_node [j] = net.results.nsd_node [j] / (double) netcount;
@@ -185,7 +185,7 @@ int main (int argc, char *argv[])
             net.results.nsd_net = net.results.nsd_net / (double) netcount;
         } else {
             net.results.conn_mn = DOUBLE_MIN;
-            for (int j=0; j<4; j++) 
+            for (int j=0; j<(nnodes + 1); j++) 
             {
                 net.results.nmn_node [j] = DOUBLE_MIN;
                 net.results.nsd_node [j] = DOUBLE_MIN;
@@ -194,13 +194,13 @@ int main (int argc, char *argv[])
             net.results.nsd_net = DOUBLE_MIN;
         }
         out_file << ",\t" << net.results.conn_mn;
-        for (int j=0; j<4; j++) 
+        for (int j=0; j<(nnodes + 1); j++) 
             out_file << ",\t" << net.results.nmn_node [j];
-        for (int j=0; j<4; j++) 
+        for (int j=0; j<(nnodes + 1); j++) 
             out_file << ",\t" << net.results.nsd_node [j];
         out_file << ",\t" << net.results.nmn_net << ",\t" << net.results.nsd_net;
-        for (int j=0; j<2; j++) 
-            for (int k=(j+1); k<3; k++)
+        for (int j=0; j<(nnodes - 1); j++) 
+            for (int k=(j+1); k<nnodes; k++)
                 out_file << ",\t" << net.results1.cov [j] [k];
         out_file << std::endl;
 
@@ -287,16 +287,17 @@ void Network::fill_alpha (base_generator_type * generator)
     for (int i=0; i<20; i++) 
         tempd = rnorm();
 
-    for (int i=0; i<3; i++) 
+    for (int i=0; i<nnodes; i++) 
     {
         k0 [i] = pars.k0 + pars.k0sd * rnorm ();
         while (k0 [i] < minqc || k0 [i] > (1.0 - minqc))
             k0 [i] = pars.k0 + pars.k0sd * rnorm ();
-        for (int j=0; j<3; j++)
+        for (int j=0; j<nnodes; j++)
             alpha [i] [j] = 0.0;
     }
 
-    // First set up connectivities
+    // First set up connectivities, which obviously has to explicitly assume
+    // that nnodes = 3!
     std::vector <std::pair <int, int> > connlist;
     connlist.push_back (std::pair <int, int> (0, 1));
     connlist.push_back (std::pair <int, int> (1, 0));
@@ -313,7 +314,7 @@ void Network::fill_alpha (base_generator_type * generator)
             tempd = pars.alpha0 + pars.alphasd * rnorm ();
         alpha [itr -> first] [itr -> second] = tempd;
     } // end for itr
-    for (int i=0; i<3; i++)
+    for (int i=0; i<nnodes; i++)
         alpha [i] [i] = 1.0;
 
     connlist.resize (0);
@@ -329,7 +330,7 @@ void Network::fill_alpha (base_generator_type * generator)
 
 void Network::make_pmat (base_generator_type * generator)
 {
-    // Obviously has to explicitly assume here that nnodes = 3!
+    // Also has to explicitly assume here that nnodes = 3!
     double tempd;
 
     tempd = k0 [0] + alpha [0] [1] * k0 [1] + alpha [0] [2] * k0 [2];
@@ -348,7 +349,7 @@ void Network::make_pmat (base_generator_type * generator)
     pmat [2] [2] = k0 [2] / tempd;
 
     // Calculate connectivity from full pmat values
-    results1.connectivity = 3.0;
+    results1.connectivity = (double) nnodes;
     for (int i=0; i<nnodes; i++) 
         results1.connectivity -= pmat [i] [i];
     results1.connectivity = results1.connectivity / (double) nnodes;
@@ -424,10 +425,7 @@ void Network::iterate_population (base_generator_type * generator)
                 nold [j] = n [j] + pars.r * n [j] * n [j] / kvals [j] - 
                         pars.r * n [j] * n [j] * n [j] / (kvals [j] * kvals [j]);
                 if (nold [j] < 0.0) 
-                {
-                    //nold [j] = 0.0; // Set to zero after calculating mean & SD values
                     tempi++;
-                }
             } // end for j
             if (tempi == nnodes) 
             {

@@ -39,6 +39,55 @@
 
 #include "utils.h"
 
+class Network
+{
+    private:
+        static constexpr int nnodes = 4, maxTrials = 100, runin = 100;
+        static constexpr double minqc = 0.001;
+        // minqc is important to prevent dividing by sometimes *really* small
+        // numbers
+    public:
+        int network_type;
+        double k0 [nnodes], alpha [nnodes] [nnodes], pmat [nnodes] [nnodes];
+        std::string filename = "aaasim3_results_r"; 
+        // filename is extended in "get_filename"
+
+        struct Parameters 
+        {
+            int nTrials, nRepeats;
+            double k0, k0sd, ksd, alpha0, alphasd, r;
+        };
+        Parameters pars;
+
+        struct Results1Net
+        {
+            double connectivity, nmn_node [nnodes + 1], nsd_node [nnodes + 1], 
+                   nmn_network, nsd_network, cov [nnodes] [nnodes];
+        };
+        Results1Net results1;
+
+        struct ResultsAll
+        {
+            double conn_mn, nmn_node [nnodes + 1], nsd_node [nnodes + 1], 
+                   nmn_net, nsd_net;
+        };
+        ResultsAll results;
+
+        Network ()
+        {
+        }
+        ~Network ()
+        {
+        }
+
+        int get_nnodes () { return nnodes;  }
+
+        void get_filename ();
+        void fill_alpha (base_generator_type * generator);
+        void make_pmat (base_generator_type * generator);
+        void iterate_population (base_generator_type * generator);
+};
+
 struct Parameters 
 {
     int nTrials;
