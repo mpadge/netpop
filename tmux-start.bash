@@ -33,6 +33,7 @@ tmux select-window -t $SESSION:3
 tmux send-keys -t $SESSION:3 'vim .travis.yml' C-m
 tmux send-keys -t $SESSION:3 ':' 'tabe makefile' C-m
 tmux send-keys -t $SESSION:3 ':' 'tabe tmux-start.bash' C-m
+tmux send-keys -t $SESSION:3 ':' 'tabe README.md' C-m
 
 tmux split-window -h
 tmux select-pane -t 0

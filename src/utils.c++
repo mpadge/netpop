@@ -97,7 +97,7 @@ void progLine (double progress, double tseconds)
         std::cout << " ";
     std::cout << "| " << (int) floor (progress * 100.0) << "%\r";
     std::cout.flush ();
-#elif
+#else
     std::cout << "[" << time_taken << " / " << time_rem << "]" << std::endl;
 #endif
 }
