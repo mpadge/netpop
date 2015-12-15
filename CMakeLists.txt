@@ -1,0 +1,20 @@
+cmake_minimum_required(VERSION 2.8.9)
+project(netpop CXX)
+include_directories(include)
+ADD_DEFINITIONS(
+    -std=c++11 
+)
+#file(GLOB SOURCES "src/*.c++")
+set(SOURCES3 src/utils.c++ src/network.c++ src/net3.c++)
+set(SOURCES4 src/utils.c++ src/network.c++ src/net4.c++)
+set(SOURCES_DEND src/utils.c++ src/utils_dendlatt.c++ src/randnet_dendritic.c++)
+set(SOURCES_LATT src/utils.c++ src/utils_dendlatt.c++ src/randnet_lattice.c++)
+
+add_executable(net3 ${SOURCES3})
+add_executable(net4 ${SOURCES4})
+add_executable(randnet_dendritic ${SOURCES_DEND})
+add_executable(randnet_lattice ${SOURCES_LATT})
+target_link_libraries(net3 boost_program_options)
+target_link_libraries(net4 boost_program_options)
+target_link_libraries(randnet_dendritic boost_program_options)
+target_link_libraries(randnet_lattice boost_program_options)
