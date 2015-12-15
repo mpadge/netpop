@@ -22,13 +22,14 @@
  *
  *  Description:    Simulates populations reproducing according to cubic
  *                  logistic dynamic and moving throughout weighted and directed
- *                  networks of three and four nodes.
+ *                  networks of three and four nodes, and more complex dendritic
+ *                  and lattice networks of 25 nodes.
  *
  *  Project Structure:  
- *      Routines are divided between the two main programs:
- *      1. net3:    Triangular network of 3 nodes
+ *      Routines are divided between the four main programs:
+ *      1. net3:        Triangular network of 3 nodes
  *      2. net4:    Four the following kinds of networks of 4 nodes:
- * 
+ *
  *      A =	*---*---*---*		B =	*---*---*
  *       							    |
  * 	        						    *
@@ -37,9 +38,8 @@
  *		        |   |		D = *---* |
  *		        *---*		         \|
  *					                  *
- *
- * Nodal variances are calculated for each network type over the full range of
- * values of connectivity (= alpha).
+ *      3. net_dend:    Dendritic network of 25 nodes
+ *      4. net_latt:    Square lattice network of 25 nodes
  *
  *  Limitations:
  *
