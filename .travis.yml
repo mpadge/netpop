@@ -20,5 +20,5 @@ install: # force compiler versions, but this is not necessary for clang
 
 script: 
     - cd ./build
-    - cmake
+    - cmake ..
     - make
