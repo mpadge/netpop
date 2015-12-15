@@ -125,30 +125,30 @@ net4/fast:
 .PHONY : net4/fast
 
 #=============================================================================
-# Target rules for targets named randnet_dendritic
+# Target rules for targets named net_dend
 
 # Build rule for target.
-randnet_dendritic: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 randnet_dendritic
-.PHONY : randnet_dendritic
+net_dend: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 net_dend
+.PHONY : net_dend
 
 # fast build rule for target.
-randnet_dendritic/fast:
-	$(MAKE) -f CMakeFiles/randnet_dendritic.dir/build.make CMakeFiles/randnet_dendritic.dir/build
-.PHONY : randnet_dendritic/fast
+net_dend/fast:
+	$(MAKE) -f CMakeFiles/net_dend.dir/build.make CMakeFiles/net_dend.dir/build
+.PHONY : net_dend/fast
 
 #=============================================================================
-# Target rules for targets named randnet_lattice
+# Target rules for targets named net_latt
 
 # Build rule for target.
-randnet_lattice: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 randnet_lattice
-.PHONY : randnet_lattice
+net_latt: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 net_latt
+.PHONY : net_latt
 
 # fast build rule for target.
-randnet_lattice/fast:
-	$(MAKE) -f CMakeFiles/randnet_lattice.dir/build.make CMakeFiles/randnet_lattice.dir/build
-.PHONY : randnet_lattice/fast
+net_latt/fast:
+	$(MAKE) -f CMakeFiles/net_latt.dir/build.make CMakeFiles/net_latt.dir/build
+.PHONY : net_latt/fast
 
 src/net3.o: src/net3.c++.o
 .PHONY : src/net3.o
@@ -230,7 +230,7 @@ src/randnet_dendritic.o: src/randnet_dendritic.c++.o
 
 # target to build an object file
 src/randnet_dendritic.c++.o:
-	$(MAKE) -f CMakeFiles/randnet_dendritic.dir/build.make CMakeFiles/randnet_dendritic.dir/src/randnet_dendritic.c++.o
+	$(MAKE) -f CMakeFiles/net_dend.dir/build.make CMakeFiles/net_dend.dir/src/randnet_dendritic.c++.o
 .PHONY : src/randnet_dendritic.c++.o
 
 src/randnet_dendritic.i: src/randnet_dendritic.c++.i
@@ -238,7 +238,7 @@ src/randnet_dendritic.i: src/randnet_dendritic.c++.i
 
 # target to preprocess a source file
 src/randnet_dendritic.c++.i:
-	$(MAKE) -f CMakeFiles/randnet_dendritic.dir/build.make CMakeFiles/randnet_dendritic.dir/src/randnet_dendritic.c++.i
+	$(MAKE) -f CMakeFiles/net_dend.dir/build.make CMakeFiles/net_dend.dir/src/randnet_dendritic.c++.i
 .PHONY : src/randnet_dendritic.c++.i
 
 src/randnet_dendritic.s: src/randnet_dendritic.c++.s
@@ -246,7 +246,7 @@ src/randnet_dendritic.s: src/randnet_dendritic.c++.s
 
 # target to generate assembly for a file
 src/randnet_dendritic.c++.s:
-	$(MAKE) -f CMakeFiles/randnet_dendritic.dir/build.make CMakeFiles/randnet_dendritic.dir/src/randnet_dendritic.c++.s
+	$(MAKE) -f CMakeFiles/net_dend.dir/build.make CMakeFiles/net_dend.dir/src/randnet_dendritic.c++.s
 .PHONY : src/randnet_dendritic.c++.s
 
 src/randnet_lattice.o: src/randnet_lattice.c++.o
@@ -254,7 +254,7 @@ src/randnet_lattice.o: src/randnet_lattice.c++.o
 
 # target to build an object file
 src/randnet_lattice.c++.o:
-	$(MAKE) -f CMakeFiles/randnet_lattice.dir/build.make CMakeFiles/randnet_lattice.dir/src/randnet_lattice.c++.o
+	$(MAKE) -f CMakeFiles/net_latt.dir/build.make CMakeFiles/net_latt.dir/src/randnet_lattice.c++.o
 .PHONY : src/randnet_lattice.c++.o
 
 src/randnet_lattice.i: src/randnet_lattice.c++.i
@@ -262,7 +262,7 @@ src/randnet_lattice.i: src/randnet_lattice.c++.i
 
 # target to preprocess a source file
 src/randnet_lattice.c++.i:
-	$(MAKE) -f CMakeFiles/randnet_lattice.dir/build.make CMakeFiles/randnet_lattice.dir/src/randnet_lattice.c++.i
+	$(MAKE) -f CMakeFiles/net_latt.dir/build.make CMakeFiles/net_latt.dir/src/randnet_lattice.c++.i
 .PHONY : src/randnet_lattice.c++.i
 
 src/randnet_lattice.s: src/randnet_lattice.c++.s
@@ -270,7 +270,7 @@ src/randnet_lattice.s: src/randnet_lattice.c++.s
 
 # target to generate assembly for a file
 src/randnet_lattice.c++.s:
-	$(MAKE) -f CMakeFiles/randnet_lattice.dir/build.make CMakeFiles/randnet_lattice.dir/src/randnet_lattice.c++.s
+	$(MAKE) -f CMakeFiles/net_latt.dir/build.make CMakeFiles/net_latt.dir/src/randnet_lattice.c++.s
 .PHONY : src/randnet_lattice.c++.s
 
 src/utils.o: src/utils.c++.o
@@ -280,8 +280,8 @@ src/utils.o: src/utils.c++.o
 src/utils.c++.o:
 	$(MAKE) -f CMakeFiles/net3.dir/build.make CMakeFiles/net3.dir/src/utils.c++.o
 	$(MAKE) -f CMakeFiles/net4.dir/build.make CMakeFiles/net4.dir/src/utils.c++.o
-	$(MAKE) -f CMakeFiles/randnet_dendritic.dir/build.make CMakeFiles/randnet_dendritic.dir/src/utils.c++.o
-	$(MAKE) -f CMakeFiles/randnet_lattice.dir/build.make CMakeFiles/randnet_lattice.dir/src/utils.c++.o
+	$(MAKE) -f CMakeFiles/net_dend.dir/build.make CMakeFiles/net_dend.dir/src/utils.c++.o
+	$(MAKE) -f CMakeFiles/net_latt.dir/build.make CMakeFiles/net_latt.dir/src/utils.c++.o
 .PHONY : src/utils.c++.o
 
 src/utils.i: src/utils.c++.i
@@ -291,8 +291,8 @@ src/utils.i: src/utils.c++.i
 src/utils.c++.i:
 	$(MAKE) -f CMakeFiles/net3.dir/build.make CMakeFiles/net3.dir/src/utils.c++.i
 	$(MAKE) -f CMakeFiles/net4.dir/build.make CMakeFiles/net4.dir/src/utils.c++.i
-	$(MAKE) -f CMakeFiles/randnet_dendritic.dir/build.make CMakeFiles/randnet_dendritic.dir/src/utils.c++.i
-	$(MAKE) -f CMakeFiles/randnet_lattice.dir/build.make CMakeFiles/randnet_lattice.dir/src/utils.c++.i
+	$(MAKE) -f CMakeFiles/net_dend.dir/build.make CMakeFiles/net_dend.dir/src/utils.c++.i
+	$(MAKE) -f CMakeFiles/net_latt.dir/build.make CMakeFiles/net_latt.dir/src/utils.c++.i
 .PHONY : src/utils.c++.i
 
 src/utils.s: src/utils.c++.s
@@ -302,8 +302,8 @@ src/utils.s: src/utils.c++.s
 src/utils.c++.s:
 	$(MAKE) -f CMakeFiles/net3.dir/build.make CMakeFiles/net3.dir/src/utils.c++.s
 	$(MAKE) -f CMakeFiles/net4.dir/build.make CMakeFiles/net4.dir/src/utils.c++.s
-	$(MAKE) -f CMakeFiles/randnet_dendritic.dir/build.make CMakeFiles/randnet_dendritic.dir/src/utils.c++.s
-	$(MAKE) -f CMakeFiles/randnet_lattice.dir/build.make CMakeFiles/randnet_lattice.dir/src/utils.c++.s
+	$(MAKE) -f CMakeFiles/net_dend.dir/build.make CMakeFiles/net_dend.dir/src/utils.c++.s
+	$(MAKE) -f CMakeFiles/net_latt.dir/build.make CMakeFiles/net_latt.dir/src/utils.c++.s
 .PHONY : src/utils.c++.s
 
 src/utils_dendlatt.o: src/utils_dendlatt.c++.o
@@ -311,8 +311,8 @@ src/utils_dendlatt.o: src/utils_dendlatt.c++.o
 
 # target to build an object file
 src/utils_dendlatt.c++.o:
-	$(MAKE) -f CMakeFiles/randnet_dendritic.dir/build.make CMakeFiles/randnet_dendritic.dir/src/utils_dendlatt.c++.o
-	$(MAKE) -f CMakeFiles/randnet_lattice.dir/build.make CMakeFiles/randnet_lattice.dir/src/utils_dendlatt.c++.o
+	$(MAKE) -f CMakeFiles/net_dend.dir/build.make CMakeFiles/net_dend.dir/src/utils_dendlatt.c++.o
+	$(MAKE) -f CMakeFiles/net_latt.dir/build.make CMakeFiles/net_latt.dir/src/utils_dendlatt.c++.o
 .PHONY : src/utils_dendlatt.c++.o
 
 src/utils_dendlatt.i: src/utils_dendlatt.c++.i
@@ -320,8 +320,8 @@ src/utils_dendlatt.i: src/utils_dendlatt.c++.i
 
 # target to preprocess a source file
 src/utils_dendlatt.c++.i:
-	$(MAKE) -f CMakeFiles/randnet_dendritic.dir/build.make CMakeFiles/randnet_dendritic.dir/src/utils_dendlatt.c++.i
-	$(MAKE) -f CMakeFiles/randnet_lattice.dir/build.make CMakeFiles/randnet_lattice.dir/src/utils_dendlatt.c++.i
+	$(MAKE) -f CMakeFiles/net_dend.dir/build.make CMakeFiles/net_dend.dir/src/utils_dendlatt.c++.i
+	$(MAKE) -f CMakeFiles/net_latt.dir/build.make CMakeFiles/net_latt.dir/src/utils_dendlatt.c++.i
 .PHONY : src/utils_dendlatt.c++.i
 
 src/utils_dendlatt.s: src/utils_dendlatt.c++.s
@@ -329,8 +329,8 @@ src/utils_dendlatt.s: src/utils_dendlatt.c++.s
 
 # target to generate assembly for a file
 src/utils_dendlatt.c++.s:
-	$(MAKE) -f CMakeFiles/randnet_dendritic.dir/build.make CMakeFiles/randnet_dendritic.dir/src/utils_dendlatt.c++.s
-	$(MAKE) -f CMakeFiles/randnet_lattice.dir/build.make CMakeFiles/randnet_lattice.dir/src/utils_dendlatt.c++.s
+	$(MAKE) -f CMakeFiles/net_dend.dir/build.make CMakeFiles/net_dend.dir/src/utils_dendlatt.c++.s
+	$(MAKE) -f CMakeFiles/net_latt.dir/build.make CMakeFiles/net_latt.dir/src/utils_dendlatt.c++.s
 .PHONY : src/utils_dendlatt.c++.s
 
 # Help Target
@@ -342,8 +342,8 @@ help:
 	@echo "... edit_cache"
 	@echo "... net3"
 	@echo "... net4"
-	@echo "... randnet_dendritic"
-	@echo "... randnet_lattice"
+	@echo "... net_dend"
+	@echo "... net_latt"
 	@echo "... rebuild_cache"
 	@echo "... src/net3.o"
 	@echo "... src/net3.i"
