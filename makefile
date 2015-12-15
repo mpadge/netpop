@@ -7,7 +7,7 @@ OBJECTS4 = utils.o network.o net4.o
 OBJECTS_DEND = utils.o utils_dendlatt.o randnet_dendritic.o
 OBJECTS_LATT = utils.o utils_dendlatt.o randnet_lattice.o 
 
-all: net3 net4 dend
+all: net3 net4 dend latt
 
 net3: $(OBJECTS3)
 	$(CXX) $(OBJECTS3) -o net3 $(LIBS) 

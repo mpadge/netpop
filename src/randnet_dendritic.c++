@@ -104,8 +104,8 @@ int main (int argc, char *argv[])
     // File names for these versions have an extra "_pinv" inserted just below,
     // while the direct one is multiplied by 2 to generate pscale values of
     // the same magnitude for r=[0.1,0.2] - that is, pscale =[0.2,0.4]
-    params.pscale = 0.04 / params.r;
-	params.pscale = 2 * params.r;
+    //params.pscale = 0.04 / params.r;
+	params.pscale = 1.0 * params.r;
 	params.N0 = 0.0;
 	params.k0 = 0.5;
 	params.maxSims = 100;
@@ -187,7 +187,7 @@ int main (int argc, char *argv[])
                 (double) CLOCKS_PER_SEC;
             progress = ((double) i * (double) nradii + (double) j) /
                 ((double) params.nTrials * (double) nradii);
-            progLine (dtemp, progress);
+            progLine (progress, dtemp);
 		} // end for j
 	} // end for i
 	out_file.close();

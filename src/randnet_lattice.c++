@@ -99,8 +99,8 @@ int main (int argc, char *argv[])
 	params.nnodes [2] = 5; // x-dimension
     // NOTE: See comments in randnet_dendritic for the following expression for
     // pscale:
-    params.pscale = 0.04 / params.r;
-    params.pscale = 2 * params.r;
+    //params.pscale = 0.04 / params.r;
+    params.pscale = 1.0 * params.r;
 	params.N0 = 0.0;
 	params.k0 = 0.5;
 	params.maxSims = 100;
@@ -168,7 +168,7 @@ int main (int argc, char *argv[])
         dtemp = ((double) clock () - (double) time_start) / 
             (double) CLOCKS_PER_SEC;
         progress = (double) i / (double) params.nTrials;
-        progLine (dtemp, progress);
+        progLine (progress, dtemp);
 	} // end for i
 	out_file.close();
 
