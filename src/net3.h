@@ -48,7 +48,7 @@ class Net3 : public Network
 {
     private:
         static constexpr int nnodes = 3;
-    
+
     public:
         struct ResultsAll
         {

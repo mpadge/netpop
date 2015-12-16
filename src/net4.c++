@@ -81,24 +81,24 @@ int main (int argc, char *argv[])
         boost::program_options::options_description config("Configuration");
         config.add_options()
             ("nTrials,t", boost::program_options::value <int>
-                (&net.pars.nTrials)->default_value (1000), "Number of trials")
+             (&net.pars.nTrials)->default_value (1000), "Number of trials")
             ("nRepeats,n", boost::program_options::value <int>
-                (&net.pars.nRepeats)->default_value (1000), "Number of repeats")
+             (&net.pars.nRepeats)->default_value (1000), "Number of repeats")
             ("k0sd,s", boost::program_options::value <double>
-                (&net.pars.k0sd)->default_value (0.1), "SD of k0")
+             (&net.pars.k0sd)->default_value (0.1), "SD of k0")
             ("alphasd,a", boost::program_options::value <double>
-                (&net.pars.alphasd)->default_value (0.1), "SD of alpha")
+             (&net.pars.alphasd)->default_value (0.1), "SD of alpha")
             ("ksd,k", boost::program_options::value <double>
-                (&net.pars.ksd)->default_value (0.1), "SD of k")
+             (&net.pars.ksd)->default_value (0.1), "SD of k")
             ("r,r", boost::program_options::value <double>
-                (&net.pars.r)->default_value (0.1), "Growth rate, r")
+             (&net.pars.r)->default_value (0.1), "Growth rate, r")
             ;
 
         // Not used here
         boost::program_options::options_description hidden("Hidden options");
         hidden.add_options()
             ("hidden-option", boost::program_options::value
-                <std::vector<std::string> >(), "hidden option")
+             <std::vector<std::string> >(), "hidden option")
             ;
 
         boost::program_options::options_description cmdline_options;
@@ -339,7 +339,7 @@ void Net4::fill_alpha (base_generator_type * generator)
         connlist.push_back (std::pair <int, int> (0, 1));
         connlist.push_back (std::pair <int, int> (1, 0));
     }
-    
+
     // Then fill the connectivities
     std::vector <std::pair <int, int> >::const_iterator itr;
     for (itr = connlist.begin(); itr < connlist.end(); itr++) 
@@ -379,16 +379,16 @@ void Net4::make_pmat (base_generator_type * generator)
          * 	0---1---2---3
          */
         tempd = k0 [0] + alpha (0, 1) * k0 [1] + 
-                alpha (0, 1) * alpha (1, 2) * k0 [2] +
-                alpha (0, 1) * alpha (1, 2) * alpha (2, 3) * k0 [3];
+            alpha (0, 1) * alpha (1, 2) * k0 [2] +
+            alpha (0, 1) * alpha (1, 2) * alpha (2, 3) * k0 [3];
         pmat (0, 0) = k0 [0] / tempd;
         pmat (0, 1) = alpha (0, 1) * k0 [1] / tempd;
         pmat (0, 2) = alpha (0, 1) * alpha (1, 2) * k0 [2] / tempd;
         pmat (0, 3) = alpha (0, 1) * alpha (1, 2) * alpha (2, 3) * 
-                        k0 [3] / tempd;
+            k0 [3] / tempd;
 
         tempd = k0 [1] + alpha (1, 0) * k0 [0] + 
-                alpha (1, 2) * k0 [2] + alpha (1, 2) * alpha (2, 3) * k0 [3];
+            alpha (1, 2) * k0 [2] + alpha (1, 2) * alpha (2, 3) * k0 [3];
         pmat (1, 0) = alpha (1, 0) * k0 [0] / tempd;
         pmat (1, 1) = k0 [1] / tempd;
         pmat (1, 2) = alpha (1, 2) * k0 [2] / tempd;
@@ -402,10 +402,10 @@ void Net4::make_pmat (base_generator_type * generator)
         pmat (2, 3) = alpha (2, 3) * k0 [3] / tempd;
 
         tempd = k0 [3] + alpha (3, 2) * k0 [2] + 
-                alpha (3, 2) * alpha (2, 1) * k0 [1] +
-                alpha (3, 2) * alpha (2, 1) * alpha (1, 0) * k0 [0];
+            alpha (3, 2) * alpha (2, 1) * k0 [1] +
+            alpha (3, 2) * alpha (2, 1) * alpha (1, 0) * k0 [0];
         pmat (3, 0) = alpha (3, 2) * alpha (2, 1) * alpha (1, 0) * 
-                        k0 [0] / tempd;
+            k0 [0] / tempd;
         pmat (3, 1) = alpha (3, 2) * alpha (2, 1) * k0 [1] / tempd;
         pmat (3, 2) = alpha (3, 2) * k0 [2] / tempd;
         pmat (3, 3) = k0 [3] / tempd;
@@ -418,31 +418,31 @@ void Net4::make_pmat (base_generator_type * generator)
          *	  0   1
          */
         tempd = k0 [0] + alpha (0, 2) * k0 [2] + 
-                alpha (0, 2) * alpha (2, 1) * k0 [1] +
-                alpha (0, 2) * alpha (2, 3) * k0 [3];
+            alpha (0, 2) * alpha (2, 1) * k0 [1] +
+            alpha (0, 2) * alpha (2, 3) * k0 [3];
         pmat (0, 0) = k0 [0] / tempd;
         pmat (0, 1) = alpha (0, 2) * alpha (2, 1) * k0 [1] / tempd;
         pmat (0, 2) = alpha (0, 2) * k0 [2] / tempd;
         pmat (0, 3) = alpha (0, 2) * alpha (2, 3) * k0 [3] / tempd;
 
         tempd = k0 [1] + alpha (1, 2) * k0 [2] + 
-                alpha (1, 2) * alpha (2, 0) * k0 [0] +
-                alpha (1, 2) * alpha (2, 3) * k0 [3];
+            alpha (1, 2) * alpha (2, 0) * k0 [0] +
+            alpha (1, 2) * alpha (2, 3) * k0 [3];
         pmat (1, 0) = alpha (1, 2) * alpha (2, 0) * k0 [0] / tempd;
         pmat (1, 1) = k0 [1] / tempd;
         pmat (1, 2) = alpha (1, 2) * k0 [2] / tempd;
         pmat (1, 3) = alpha (1, 2) * alpha (2, 3) * k0 [3] / tempd;
 
         tempd = k0 [2] + alpha (2, 0) * k0 [0] + 
-                alpha (2, 1) * k0 [1] + alpha (2, 3) * k0 [3];
+            alpha (2, 1) * k0 [1] + alpha (2, 3) * k0 [3];
         pmat (2, 0) = alpha (2, 0) * k0 [0] / tempd;
         pmat (2, 1) = alpha (2, 1) * k0 [1] / tempd;
         pmat (2, 2) = k0 [2] / tempd;
         pmat (2, 3) = alpha (2, 3) * k0 [3] / tempd;
 
         tempd = k0 [3] + alpha (3, 2) * k0 [2] + 
-                alpha (3, 2) * alpha (2, 1) * k0 [1] +
-                alpha (3, 2) * alpha (2, 0) * k0 [0];
+            alpha (3, 2) * alpha (2, 1) * k0 [1] +
+            alpha (3, 2) * alpha (2, 0) * k0 [0];
         pmat (3, 0) = alpha (3, 2) * alpha (2, 0) * k0 [0] / tempd;
         pmat (3, 1) = alpha (3, 2) * alpha (2, 1) * k0 [1] / tempd;
         pmat (3, 2) = alpha (3, 2) * k0 [2] / tempd;
@@ -457,35 +457,35 @@ void Net4::make_pmat (base_generator_type * generator)
         if ((alpha (0, 2) * alpha (2, 3) * alpha (3, 1)) > alpha (0, 1)) 
         {
             tempd = k0 [0] + alpha (0, 2) * k0 [2] + 
-                    alpha (0, 2) * alpha (2, 3) * k0 [3] +
-                    alpha (0, 2) * alpha (2, 3) * alpha (3, 1) * k0 [1];
+                alpha (0, 2) * alpha (2, 3) * k0 [3] +
+                alpha (0, 2) * alpha (2, 3) * alpha (3, 1) * k0 [1];
             pmat (0, 0) = k0 [0] / tempd;
             pmat (0, 1) = alpha (0, 2) * alpha (2, 3) * alpha (3, 1) * 
-                            k0 [1] / tempd;
+                k0 [1] / tempd;
             pmat (0, 2) = alpha (0, 2) * k0 [2] / tempd;
             pmat (0, 3) = alpha (0, 2) * alpha (2, 3) * k0 [3] / tempd;
         } else if ((alpha (0, 1) * alpha (1, 3) * alpha (3, 2)) > 
                 alpha (0, 2)) {
             tempd = k0 [0] + alpha (0, 1) * k0 [1] + 
-                    alpha (0, 1) * alpha (1, 3) * k0 [3] +
-                    alpha (0, 1) * alpha (1, 3) * alpha (3, 2) * k0 [2];
+                alpha (0, 1) * alpha (1, 3) * k0 [3] +
+                alpha (0, 1) * alpha (1, 3) * alpha (3, 2) * k0 [2];
             pmat (0, 0) = k0 [0] / tempd;
             pmat (0, 1) = alpha (0, 1) * k0 [1] / tempd;
             pmat (0, 2) = alpha (0, 1) * alpha (1, 3) * alpha (3, 2) * 
-                            k0 [2] / tempd;
+                k0 [2] / tempd;
             pmat (0, 3) = alpha (0, 1) * alpha (1, 3) * k0 [3] / tempd;
         } else if ((alpha (0, 2) * alpha (2, 3)) > 
                 (alpha (0, 1) * alpha (1, 3))) {
             tempd = k0 [0] + alpha (0, 1) * k0 [1] + alpha (0, 2) * k0 [2] + 
-                    alpha (0, 2) * alpha (2, 3) * k0 [3];
+                alpha (0, 2) * alpha (2, 3) * k0 [3];
             pmat (0, 0) = k0 [0] / tempd;
             pmat (0, 1) = alpha (0, 1) * k0 [1] / tempd;
             pmat (0, 2) = alpha (0, 2) * k0 [2] / tempd;
             pmat (0, 3) = alpha (0, 2) * alpha (2, 3) * k0 [3] / tempd;
         } else {
             tempd = k0 [0] + alpha (0, 1) * k0 [1] + 
-                    alpha (0, 2) * k0 [2] + 
-                    alpha (0, 1) * alpha (1, 3) * k0 [3];
+                alpha (0, 2) * k0 [2] + 
+                alpha (0, 1) * alpha (1, 3) * k0 [3];
             pmat (0, 0) = k0 [0] / tempd;
             pmat (0, 1) = alpha (0, 1) * k0 [1] / tempd;
             pmat (0, 2) = alpha (0, 2) * k0 [2] / tempd;
@@ -501,18 +501,18 @@ void Net4::make_pmat (base_generator_type * generator)
         if ((alpha (1, 3) * alpha (3, 2) * alpha (2, 0)) > alpha (1, 0)) 
         {
             tempd = k0 [1] + alpha (1, 3) * k0 [3] + 
-                    alpha (1, 3) * alpha (3, 2) * k0 [2] +
-                    alpha (1, 3) * alpha (3, 2) * alpha (2, 0) * k0 [0];
+                alpha (1, 3) * alpha (3, 2) * k0 [2] +
+                alpha (1, 3) * alpha (3, 2) * alpha (2, 0) * k0 [0];
             pmat (1, 0) = alpha (1, 3) * alpha (3, 2) * alpha (2, 0) * 
-                            k0 [0] / tempd;
+                k0 [0] / tempd;
             pmat (1, 1) = k0 [1] / tempd;
             pmat (1, 2) = alpha (1, 3) * alpha (3, 2) * k0 [2] / tempd;
             pmat (1, 3) = alpha (1, 3) * k0 [3] / tempd;
         } else if ((alpha (1, 0) * alpha (0, 2) * alpha (2, 3)) > 
                 alpha (1, 3)) {
             tempd = k0 [1] + alpha (1, 0) * k0 [0] + 
-                    alpha (1, 0) * alpha (0, 2) * k0 [2] +
-                    alpha (1, 0) * alpha (0, 2) * alpha (2, 3) * k0 [3];
+                alpha (1, 0) * alpha (0, 2) * k0 [2] +
+                alpha (1, 0) * alpha (0, 2) * alpha (2, 3) * k0 [3];
             pmat (1, 0) = alpha (1, 0) * k0 [0] / tempd;
             pmat (1, 1) = k0 [1] / tempd;
             pmat (1, 2) = alpha (1, 0) * alpha (0, 2) * k0 [2] / tempd;
@@ -521,14 +521,14 @@ void Net4::make_pmat (base_generator_type * generator)
         } else if ((alpha (1, 3) * alpha (3, 2)) > 
                 (alpha (1, 0) * alpha (0, 2))) {
             tempd = k0 [1] + alpha (1, 3) * k0 [3] + alpha (1, 0) * k0 [0] + 
-                    alpha (1, 3) * alpha (3, 2) * k0 [2];
+                alpha (1, 3) * alpha (3, 2) * k0 [2];
             pmat (1, 0) = alpha (1, 0) * k0 [0] / tempd;
             pmat (1, 1) = k0 [1] / tempd;
             pmat (1, 2) = alpha (1, 3) * alpha (3, 2) * k0 [2] / tempd;
             pmat (1, 3) = alpha (1, 3) * k0 [3] / tempd;
         } else {
             tempd = k0 [1] + alpha (1, 3) * k0 [3] + alpha (1, 0) * k0 [0] + 
-                    alpha (1, 0) * alpha (0, 2) * k0 [2];
+                alpha (1, 0) * alpha (0, 2) * k0 [2];
             pmat (1, 0) = alpha (1, 0) * k0 [0] / tempd;
             pmat (1, 1) = k0 [1] / tempd;
             pmat (1, 2) = alpha (1, 0) * alpha (0, 2) * k0 [2] / tempd;
@@ -544,18 +544,18 @@ void Net4::make_pmat (base_generator_type * generator)
         if ((alpha (2, 0) * alpha (0, 1) * alpha (1, 3)) > alpha (2, 3)) 
         {
             tempd = k0 [2] + alpha (2, 0) * k0 [0] + 
-                    alpha (2, 0) * alpha (0, 1) * k0 [1] +
-                    alpha (2, 0) * alpha (0, 1) * alpha (1, 3) * k0 [3];
+                alpha (2, 0) * alpha (0, 1) * k0 [1] +
+                alpha (2, 0) * alpha (0, 1) * alpha (1, 3) * k0 [3];
             pmat (2, 0) = alpha (2, 0) * k0 [0] / tempd;
             pmat (2, 1) = alpha (2, 0) * alpha (0, 1) * k0 [1] / tempd;
             pmat (2, 2) = k0 [2] / tempd;
             pmat (2, 3) = alpha (2, 0) * alpha (0, 1) * alpha (1, 3) * 
-                            k0 [3] / tempd;
+                k0 [3] / tempd;
         } else if ((alpha (2, 3) * alpha (3, 1) * alpha (1, 0)) > 
                 alpha (2, 0)) {
             tempd = k0 [2] + alpha (2, 3) * k0 [3] + 
-                    alpha (2, 3) * alpha (3, 1) * k0 [1] +
-                    alpha (2, 3) * alpha (3, 1) * alpha (1, 0) * k0 [0];
+                alpha (2, 3) * alpha (3, 1) * k0 [1] +
+                alpha (2, 3) * alpha (3, 1) * alpha (1, 0) * k0 [0];
             pmat (2, 0) = alpha (2, 3) * alpha (3, 1) * alpha (1, 0) * 
                 k0 [0] / tempd;
             pmat (2, 1) = alpha (2, 3) * alpha (3, 1) * k0 [1] / tempd;
@@ -564,14 +564,14 @@ void Net4::make_pmat (base_generator_type * generator)
         } else if ((alpha (2, 3) * alpha (3, 1)) > 
                 (alpha (2, 0) * alpha (0, 1))) {
             tempd = k0 [2] + alpha (2, 0) * k0 [0] + alpha (2, 3) * k0 [3] + 
-                    alpha (2, 3) * alpha (3, 1) * k0 [1];
+                alpha (2, 3) * alpha (3, 1) * k0 [1];
             pmat (2, 0) = alpha (2, 0) * k0 [0] / tempd;
             pmat (2, 1) = alpha (2, 3) * alpha (3, 1) * k0 [1] / tempd;
             pmat (2, 2) = k0 [2] / tempd;
             pmat (2, 3) = alpha (2, 3) * k0 [3] / tempd;
         } else {
             tempd = k0 [2] + alpha (2, 0) * k0 [0] + alpha (2, 3) * k0 [3] + 
-                    alpha (2, 0) * alpha (0, 1) * k0 [1];
+                alpha (2, 0) * alpha (0, 1) * k0 [1];
             pmat (2, 0) = alpha (2, 0) * k0 [0] / tempd;
             pmat (2, 1) = alpha (2, 0) * alpha (0, 1) * k0 [1] / tempd;
             pmat (2, 2) = k0 [2] / tempd;
@@ -587,34 +587,34 @@ void Net4::make_pmat (base_generator_type * generator)
         if ((alpha (3, 2) * alpha (2, 0) * alpha (0, 1)) > alpha (3, 1)) 
         {
             tempd = k0 [3] + alpha (3, 2) * k0 [2] + 
-                    alpha (3, 2) * alpha (2, 0) * k0 [0] +
-                    alpha (3, 2) * alpha (2, 0) * alpha (0, 1) * k0 [1];
+                alpha (3, 2) * alpha (2, 0) * k0 [0] +
+                alpha (3, 2) * alpha (2, 0) * alpha (0, 1) * k0 [1];
             pmat (3, 0) = alpha (3, 2) * alpha (2, 0) * k0 [0] / tempd;
             pmat (3, 1) = alpha (3, 2) * alpha (2, 0) * alpha (0, 1) * 
-                            k0 [1] / tempd;
+                k0 [1] / tempd;
             pmat (3, 2) = alpha (3, 2) * k0 [2] / tempd;
             pmat (3, 3) = k0 [3] / tempd;
         } else if ((alpha (3, 1) * alpha (1, 0) * alpha (0, 2)) > 
                 alpha (3, 2)) {
             tempd = k0 [3] + alpha (3, 1) * k0 [1] + 
-                    alpha (3, 1) * alpha (1, 0) * k0 [0] +
-                    alpha (3, 1) * alpha (1, 0) * alpha (0, 2) * k0 [2];
+                alpha (3, 1) * alpha (1, 0) * k0 [0] +
+                alpha (3, 1) * alpha (1, 0) * alpha (0, 2) * k0 [2];
             pmat (3, 0) = alpha (3, 1) * alpha (1, 0) * k0 [0] / tempd;
             pmat (3, 1) = alpha (3, 1) * k0 [1] / tempd;
             pmat (3, 2) = alpha (3, 1) * alpha (1, 0) * alpha (0, 2) * 
-                            k0 [2] / tempd;
+                k0 [2] / tempd;
             pmat (3, 3) = k0 [3] / tempd;
         } else if ((alpha (3, 2) * alpha (2, 0)) > 
-                    (alpha (3, 1) * alpha (1, 0))) {
+                (alpha (3, 1) * alpha (1, 0))) {
             tempd = k0 [3] + alpha (3, 1) * k0 [1] + alpha (3, 2) * k0 [2] + 
-                    alpha (3, 2) * alpha (2, 0) * k0 [0];
+                alpha (3, 2) * alpha (2, 0) * k0 [0];
             pmat (3, 0) = alpha (3, 2) * alpha (2, 0) * k0 [0] / tempd;
             pmat (3, 1) = alpha (3, 1) * k0 [1] / tempd;
             pmat (3, 2) = alpha (3, 2) * k0 [2] / tempd;
             pmat (3, 3) = k0 [3] / tempd;
         } else {
             tempd = k0 [3] + alpha (3, 1) * k0 [1] + alpha (3, 2) * k0 [2] + 
-                    alpha (3, 1) * alpha (1, 0) * k0 [0];
+                alpha (3, 1) * alpha (1, 0) * k0 [0];
             pmat (3, 0) = alpha (3, 1) * alpha (1, 0) * k0 [0] / tempd;
             pmat (3, 1) = alpha (3, 1) * k0 [1] / tempd;
             pmat (3, 2) = alpha (3, 2) * k0 [2] / tempd;
@@ -633,24 +633,24 @@ void Net4::make_pmat (base_generator_type * generator)
         if ((alpha (0, 2) * alpha (2, 1)) > alpha (0, 1)) 
         {
             tempd = k0 [0] + alpha (0, 2) * alpha (2, 1) * k0 [1] + 
-                    alpha (0, 2) * k0 [2] + 
-                    alpha (0, 2) * alpha (2, 3) * k0 [3];
+                alpha (0, 2) * k0 [2] + 
+                alpha (0, 2) * alpha (2, 3) * k0 [3];
             pmat (0, 0) = k0 [0] / tempd;
             pmat (0, 1) = alpha (0, 2) * alpha (2, 1) * k0 [1] / tempd;
             pmat (0, 2) = alpha (0, 2) * k0 [2] / tempd;
             pmat (0, 3) = alpha (0, 2) * alpha (2, 3) * k0 [3] / tempd;
         } else if ((alpha (0, 1) * alpha (1, 2)) > alpha (0, 2)) {
             tempd = k0 [0] + alpha (0, 1) * k0 [1] + 
-                    alpha (0, 1) * alpha (1, 2) * k0 [2] +
-                    alpha (0, 1) * alpha (1, 2) * alpha (2, 3) * k0 [3];
+                alpha (0, 1) * alpha (1, 2) * k0 [2] +
+                alpha (0, 1) * alpha (1, 2) * alpha (2, 3) * k0 [3];
             pmat (0, 0) = k0 [0] / tempd;
             pmat (0, 1) = alpha (0, 1) * k0 [1] / tempd;
             pmat (0, 2) = alpha (0, 1) * alpha (1, 2) * k0 [2] / tempd;
             pmat (0, 3) = alpha (0, 1) * alpha (1, 2) * alpha (2, 3) * 
-                            k0 [3] / tempd;
+                k0 [3] / tempd;
         } else {
             tempd = k0 [0] + alpha (0, 1) * k0 [1] + alpha (0, 2) * k0 [2] + 
-                    alpha (0, 2) * alpha (2, 3) * k0 [3];
+                alpha (0, 2) * alpha (2, 3) * k0 [3];
             pmat (0, 0) = k0 [0] / tempd;
             pmat (0, 1) = alpha (0, 1) * k0 [1] / tempd;
             pmat (0, 2) = alpha (0, 2) * k0 [2] / tempd;
@@ -668,24 +668,24 @@ void Net4::make_pmat (base_generator_type * generator)
         if ((alpha (1, 2) * alpha (2, 0)) > alpha (1, 0)) 
         {
             tempd = k0 [1] + alpha (1, 2) * alpha (2, 0) * k0 [0] + 
-                    alpha (1, 2) * k0 [2] +
-                    alpha (1, 2) * alpha (2, 3) * k0 [3];
+                alpha (1, 2) * k0 [2] +
+                alpha (1, 2) * alpha (2, 3) * k0 [3];
             pmat (1, 0) = alpha (1, 2) * alpha (2, 0) * k0 [0] / tempd;
             pmat (1, 1) = k0 [1] / tempd;
             pmat (1, 2) = alpha (1, 2) * k0 [2] / tempd;
             pmat (1, 3) = alpha (1, 2) * alpha (2, 3) * k0 [3] / tempd;
         } else if ((alpha (1, 0) * alpha (0, 2)) > alpha (1, 2)) {
             tempd = k0 [1] + alpha (1, 0) * k0 [0] + 
-                    alpha (1, 0) * alpha (0, 2) * k0 [2] +
-                    alpha (1, 0) * alpha (0, 2) * alpha (2, 3) * k0 [3];
+                alpha (1, 0) * alpha (0, 2) * k0 [2] +
+                alpha (1, 0) * alpha (0, 2) * alpha (2, 3) * k0 [3];
             pmat (1, 0) = alpha (1, 0) * k0 [0] / tempd;
             pmat (1, 1) = k0 [1] / tempd; 
             pmat (1, 2) = alpha (1, 0) * alpha (0, 2) * k0 [2] / tempd;
             pmat (1, 3) = alpha (1, 0) * alpha (0, 2) * alpha (2, 3) * 
-                            k0 [3] / tempd;
+                k0 [3] / tempd;
         } else {
             tempd = k0 [1] + alpha (1, 0) * k0 [0] + alpha (1, 2) * k0 [2] + 
-                    alpha (1, 2) * alpha (2, 3) * k0 [3];
+                alpha (1, 2) * alpha (2, 3) * k0 [3];
             pmat (1, 0) = alpha (1, 0) * k0 [0] / tempd;
             pmat (1, 1) = k0 [1] / tempd;
             pmat (1, 2) = alpha (1, 2) * k0 [2] / tempd;
@@ -703,46 +703,46 @@ void Net4::make_pmat (base_generator_type * generator)
         if ((alpha (2, 1) * alpha (1, 0)) > alpha (2, 0)) 
         {
             tempd = k0 [2] + alpha (2, 1) * k0 [1] + 
-                    alpha (2, 1) * alpha (1, 0) * k0 [0] + 
-                    alpha (2, 3) * k0 [3];
+                alpha (2, 1) * alpha (1, 0) * k0 [0] + 
+                alpha (2, 3) * k0 [3];
             pmat (2, 0) = alpha (2, 1) * alpha (1, 0) * k0 [0] / tempd;
             pmat (2, 1) = alpha (2, 1) * k0 [1] / tempd;
             pmat (2, 2) = k0 [2] / tempd;
             pmat (2, 3) = alpha (2, 3) * k0 [3] / tempd;
             tempd = k0 [3] + alpha (3, 2) * k0 [2] + 
-                    alpha (3, 2) * alpha (2, 1) * k0 [1] +
-                    alpha (3, 2) * alpha (2, 1) * alpha (1, 0) * k0 [0];
+                alpha (3, 2) * alpha (2, 1) * k0 [1] +
+                alpha (3, 2) * alpha (2, 1) * alpha (1, 0) * k0 [0];
             pmat (3, 0) = alpha (3, 2) * alpha (2, 1) * alpha (1, 0) * 
-                            k0 [0] / tempd;
+                k0 [0] / tempd;
             pmat (3, 1) = alpha (3, 2) * alpha (2, 1) * k0 [1] / tempd;
             pmat (3, 2) = alpha (3, 2) * k0 [2] / tempd;
             pmat (3, 3) = k0 [3] / tempd;
         } else if ((alpha (2, 0) * alpha (0, 1)) > alpha (2, 1)) {
             tempd = k0 [2] + alpha (2, 0) * k0 [0] + 
-                    alpha (2, 0) * alpha (0, 1) * k0 [1] + 
-                    alpha (2, 3) * k0 [3];
+                alpha (2, 0) * alpha (0, 1) * k0 [1] + 
+                alpha (2, 3) * k0 [3];
             pmat (2, 0) = alpha (2, 0) * k0 [0] / tempd;
             pmat (2, 1) = alpha (2, 0) * alpha (0, 1) * k0 [1] / tempd;
             pmat (2, 2) = k0 [2] / tempd;
             pmat (2, 3) = alpha (2, 3) * k0 [3] / tempd;
             tempd = k0 [3] + alpha (3, 2) * k0 [2] + 
-                    alpha (3, 2) * alpha (2, 0) * k0 [0] +
-                    alpha (3, 2) * alpha (2, 0) * alpha (0, 1) * k0 [1];
+                alpha (3, 2) * alpha (2, 0) * k0 [0] +
+                alpha (3, 2) * alpha (2, 0) * alpha (0, 1) * k0 [1];
             pmat (3, 0) = alpha (3, 2) * alpha (2, 0) * k0 [0] / tempd;
             pmat (3, 1) = alpha (3, 2) * alpha (2, 0) * alpha (0, 1) * 
-                            k0 [1] / tempd;
+                k0 [1] / tempd;
             pmat (3, 2) = alpha (3, 2) * k0 [2] / tempd;
             pmat (3, 3) = k0 [3] / tempd;
         } else {
             tempd = k0 [2] + alpha (2, 0) * k0 [0] + alpha (2, 1) * k0 [1] + 
-                    alpha (2, 3) * k0 [3];
+                alpha (2, 3) * k0 [3];
             pmat (2, 0) = alpha (2, 0) * k0 [0] / tempd;
             pmat (2, 1) = alpha (2, 1) * k0 [1] / tempd;
             pmat (2, 2) = k0 [2] / tempd;
             pmat (2, 3) = alpha (2, 3) * k0 [3] / tempd;
             tempd = k0 [3] + alpha (3, 2) * k0 [2] + 
-                    alpha (3, 2) * alpha (2, 0) * k0 [0] + 
-                    alpha (3, 2) * alpha (2, 1) * k0 [1];
+                alpha (3, 2) * alpha (2, 0) * k0 [0] + 
+                alpha (3, 2) * alpha (2, 1) * k0 [1];
             pmat (3, 0) = alpha (3, 2) * alpha (2, 0) * k0 [0] / tempd;
             pmat (3, 1) = alpha (3, 2) * alpha (2, 1) * k0 [1] / tempd;
             pmat (3, 2) = alpha (3, 2) * k0 [2] / tempd;

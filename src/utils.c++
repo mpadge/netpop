@@ -47,7 +47,7 @@ std::string get_time (double tseconds)
 {
     std::stringstream sstr;
     sstr.str ("");
-    
+
     int hh = floor (tseconds / 3600.0);
     if (hh == 0) 
         sstr << "00:";

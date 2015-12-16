@@ -151,7 +151,7 @@ void Network::iterate_population (base_generator_type * generator, int nnodes)
             for (int j=0; j<nnodes; j++) 
             {
                 nold [j] = n [j] + pars.r * n [j] * n [j] / kvals [j] - 
-                        pars.r * n [j] * n [j] * n [j] / (kvals [j] * kvals [j]);
+                    pars.r * n [j] * n [j] * n [j] / (kvals [j] * kvals [j]);
                 if (nold [j] < 0.0) 
                     tempi++;
             } // end for j
@@ -183,16 +183,16 @@ void Network::iterate_population (base_generator_type * generator, int nnodes)
             for (int j=0; j<nnodes; j++) 
             {
                 results1.nmn_node (j) = results1.nmn_node (j) 
-                            / (double) pars.nTrials;
+                    / (double) pars.nTrials;
                 results1.nsd_node (j) = results1.nsd_node (j) / 
-                            (double) pars.nTrials -
-                            results1.nmn_node (j) * results1.nmn_node (j);
+                    (double) pars.nTrials -
+                    results1.nmn_node (j) * results1.nmn_node (j);
             }
             for (int j=0; j<(nnodes - 1); j++)
                 for (int k=(j+1); k<nnodes; k++)
                     results1.cov (j, k) = results1.cov (j, k) / 
-                            (double) pars.nTrials -
-                            results1.nmn_node (j) * results1.nmn_node (k);
+                        (double) pars.nTrials -
+                        results1.nmn_node (j) * results1.nmn_node (k);
         } else { 
             count++;
         }

@@ -50,10 +50,10 @@ class Network
         static constexpr double minqc = 0.001;
         // minqc is important to prevent dividing by sometimes *really* small
         // numbers
-        
+
         dvec k0;
         dmat alpha, pmat;
-        
+
         std::string filename;
 
         struct Parameters 

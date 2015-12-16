@@ -81,8 +81,8 @@ typedef boost::numeric::ublas::vector <double> dvec;
 typedef boost::numeric::ublas::matrix <double> dmat;
 
 const double DOUBLE_MAX = std::numeric_limits<double>::max (),
-    DOUBLE_MIN = -DOUBLE_MAX,
-    FLOAT_MAX = std::numeric_limits <float>::max ();
+      DOUBLE_MIN = -DOUBLE_MAX,
+      FLOAT_MAX = std::numeric_limits <float>::max ();
 
 std::string get_time (double tseconds);
 void progLine (double progress, double tseconds);

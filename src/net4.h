@@ -47,7 +47,7 @@ class Net4 : public Network
 {
     private:
         static constexpr int nnodes = 4;
-    
+
     public:
         int network_type;
         struct ResultsAll

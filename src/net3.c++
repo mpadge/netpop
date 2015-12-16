@@ -72,24 +72,24 @@ int main (int argc, char *argv[])
         boost::program_options::options_description config("Configuration");
         config.add_options()
             ("nTrials,t", boost::program_options::value <int>
-                (&net.pars.nTrials)->default_value (1000), "Number of trials")
+             (&net.pars.nTrials)->default_value (1000), "Number of trials")
             ("nRepeats,n", boost::program_options::value <int>
-                (&net.pars.nRepeats)->default_value (1000), "Number of repeats")
+             (&net.pars.nRepeats)->default_value (1000), "Number of repeats")
             ("k0sd,s", boost::program_options::value <double>
-                (&net.pars.k0sd)->default_value (0.1), "SD of k0")
+             (&net.pars.k0sd)->default_value (0.1), "SD of k0")
             ("alphasd,a", boost::program_options::value <double>
-                (&net.pars.alphasd)->default_value (0.1), "SD of alpha")
+             (&net.pars.alphasd)->default_value (0.1), "SD of alpha")
             ("ksd,k", boost::program_options::value <double>
-                (&net.pars.ksd)->default_value (0.1), "SD of k")
+             (&net.pars.ksd)->default_value (0.1), "SD of k")
             ("r,r", boost::program_options::value <double>
-                (&net.pars.r)->default_value (0.1), "Growth rate, r")
+             (&net.pars.r)->default_value (0.1), "Growth rate, r")
             ;
 
         // Not used here
         boost::program_options::options_description hidden("Hidden options");
         hidden.add_options()
             ("hidden-option", boost::program_options::value
-                <std::vector<std::string> >(), "hidden option")
+             <std::vector<std::string> >(), "hidden option")
             ;
 
         boost::program_options::options_description cmdline_options;
@@ -162,7 +162,7 @@ int main (int argc, char *argv[])
             net.fill_alpha (&generator);
             net.make_pmat (&generator);
             net.iterate_population (&generator, nnodes);
-        
+
             if (net.results1.nmn_network > DOUBLE_MIN) 
             {
                 netcount++;
@@ -259,7 +259,7 @@ void Net3::fill_alpha (base_generator_type * generator)
     connlist.push_back (std::pair <int, int> (2, 0));
     connlist.push_back (std::pair <int, int> (1, 2));
     connlist.push_back (std::pair <int, int> (2, 1));
-    
+
     std::vector <std::pair <int, int> >::const_iterator itr;
     for (itr = connlist.begin(); itr < connlist.end(); itr++) 
     {
