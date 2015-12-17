@@ -214,7 +214,7 @@ void Network::iterate_population (base_generator_type * generator, int nnodes)
     } else {
         results1.nmn_node (nnodes) = 0.0;
         results1.nsd_node (nnodes) = 0.0;
-        for (int i=0; i<nnodes; i++) 
+        for (int i=0; i<(nnodes + 1); i++) 
         {
             results1.nmn_node (nnodes) += results1.nmn_node [i];
             results1.nsd_node (nnodes) += results1.nsd_node [i];

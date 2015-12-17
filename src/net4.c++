@@ -151,6 +151,8 @@ int main (int argc, char *argv[])
     std::cout.precision (4);
 
     out_file.open (net.filename.c_str(), std::ofstream::out);
+    //out_file.setf (std::ios::fixed, std::ios::floatfield);   
+    //out_file.precision (10);
     out_file << "alpha,\tconn0,\tmn0node0,\tmn0node1,\tmn0node2,\tmn0node3,\t" <<
         "mn0node_all,\tsd0node0,\tsd0node1,\tsd0node2,\tsd0node3,\t" <<
         "sd0node_all,\tmn0net,\tsd0net,\tcov001,\tcov002,\tcov003,\t" <<
@@ -169,7 +171,7 @@ int main (int argc, char *argv[])
     {
         net.pars.alpha0 = (double) i / 100.0;
         out_file << net.pars.alpha0;
-        for (int j=0; j<4; j++) // the four network types
+        for (net.network_type = 0; net.network_type<4; net.network_type++)
         {
             for (int k=0; k<(nnodes + 1); k++) 
             {
@@ -232,9 +234,8 @@ int main (int argc, char *argv[])
             for (int k=0; k<(nnodes - 1); k++) 
                 for (int m=(k+1); m<nnodes; m++)
                     out_file << ",\t" << net.results1.cov (k, m);
-        } // end for j
+        } // end for net.network_type
         out_file << std::endl;
-        //std::cout << "."; std::cout.flush();
 
         progress = (double) i / 100.0;
         tempd = ((double) clock () - (double) time_start) / 

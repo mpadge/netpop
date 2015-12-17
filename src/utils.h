@@ -74,7 +74,6 @@ typedef boost::numeric::ublas::vector<int> ivec;
 typedef boost::numeric::ublas::matrix<int> imat;
 typedef std::vector <double> stdvec;
 
-
 typedef boost::numeric::ublas::vector <int> ivec;
 typedef boost::numeric::ublas::matrix <int> imat;
 typedef boost::numeric::ublas::vector <double> dvec;
