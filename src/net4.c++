@@ -760,7 +760,7 @@ void Net4::make_pmat (base_generator_type * generator)
     // little difference between the different networks. The value of 0.1 is a
     // random guess of a value that might enhance movement sufficiently to
     // reveal some stronger differences.
-    double pscale = 10.0 * pars.r;
+    double pscale = 0.1 * pars.r;
     for (int i=0; i<nnodes; i++) 
         pmat (i, i) = 1.0 - pscale * (1.0 - pmat (i, i));
     for (int i=0; i<(nnodes - 1); i++) 

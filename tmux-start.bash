@@ -15,6 +15,7 @@ tmux send-keys -t $SESSION:1 'vim net3.h' C-m
 tmux send-keys -t $SESSION:1 ':' 'tabe net3.c++' C-m
 tmux send-keys -t $SESSION:1 ':' 'tabe net4.h' C-m
 tmux send-keys -t $SESSION:1 ':' 'tabe net4.c++' C-m
+tmux send-keys -t $SESSION:1 ':' 'tabe net4-homog.c++' C-m
 tmux select-pane -t 0
 
 tmux new-window -t $SESSION:2 -k -n dendlatt
