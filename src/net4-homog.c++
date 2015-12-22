@@ -65,7 +65,6 @@
 
 int main (int argc, char *argv[])
 {
-    int netcount;
     double tempd, progress;
     std::string tempstr; // for simple timeout for non-linux systems
     Net4 net;
@@ -85,10 +84,12 @@ int main (int argc, char *argv[])
         // random, so the only parameter is nRepeats
         boost::program_options::options_description config("Configuration");
         config.add_options()
-            ("nRepeats,n", boost::program_options::value <int>
-             (&net.pars.nRepeats)->default_value (1000), "Number of repeats")
+            ("nTrials,n", boost::program_options::value <int>
+             (&net.pars.nTrials)->default_value (1e6), "Number of trials")
             ("r,r", boost::program_options::value <double>
              (&net.pars.r)->default_value (0.1), "Growth rate, r")
+            ("ksd,k", boost::program_options::value <double>
+             (&net.pars.ksd)->default_value (0.1), "SD of k")
             ;
 
         // Not used here
@@ -126,7 +127,8 @@ int main (int argc, char *argv[])
         std::cout << e.what() << std::endl;
         return 1;
     }    
-    std::cout << "nRepeats for each alpha = " << net.pars.nRepeats << std::endl;
+    std::cout << "nTrials for each alpha = " << net.pars.nTrials << 
+        "; with ksd = " << net.pars.ksd << std::endl;
 
     int nnodes = net.get_nnodes (); // == 4
 
@@ -138,16 +140,25 @@ int main (int argc, char *argv[])
     if (net.pars.r < 1.0)
         fname += "0";
     ss << round (net.pars.r * 100.0);
+    fname += ss.str () + "_ksd";
+    ss.str ("");
+    if (net.pars.ksd < 0.01)
+        fname += "0";
+    if (net.pars.ksd < 0.1)
+        fname += "0";
+    ss << round (1000.0 * net.pars.ksd);
     fname += ss.str () + ".txt";
 
     time_start = clock ();
 
-    net.pars.alpha0 = 0.5;
-    net.pars.k0 = 0.5;
+    // makepmat explicitly presumes k0=1.0 and doesn't use the value, but
+    // iterate_population still uses it.
+    net.pars.k0 = 1.0; 
     net.pars.k0sd = 0.0;
-    net.pars.ksd = 0.0;
     net.pars.alphasd = 0.0;
-    net.pars.nTrials = 1;
+    net.k0.resize (nnodes);
+    for (int i=0; i<nnodes; i++) 
+        net.k0 (i) = net.pars.k0;
 
     time (&seed);
     generator.seed (static_cast <unsigned int> (seed));
@@ -176,57 +187,20 @@ int main (int argc, char *argv[])
         out_file << net.pars.alpha0;
         for (net.network_type = 0; net.network_type<4; net.network_type++)
         {
-            for (int k=0; k<(nnodes + 1); k++) 
+            net.make_pmat (&generator);
+            net.iterate_population (&generator, nnodes);
+
+            assert (net.results1.nmn_network > DOUBLE_MIN);
+            
+            net.results.conn_mn = net.results1.connectivity;
+            for (int j=0; j<(nnodes + 1); j++) 
             {
-                net.results.nmn_node [k] = 0.0;
-                net.results.nsd_node [k] = 0.0;
+                net.results.nmn_node [j] = net.results1.nmn_node [j];
+                net.results.nsd_node [j] = net.results1.nsd_node [j];
             }
-            net.results.nmn_net = 0.0;
-            net.results.nsd_net = 0.0;
-            net.results.conn_mn = 0.0;
-            netcount = 0;
-            for (int k=0; k<net.pars.nRepeats; k++) 
-            {
-                net.fill_alpha (&generator);
-                net.make_pmat (&generator);
-                net.iterate_population (&generator, nnodes);
-                if (net.results1.nmn_network > DOUBLE_MIN) 
-                {
-                    netcount++;
-                    net.results.conn_mn += net.results1.connectivity;
-                    for (int m=0; m<(nnodes + 1); m++) 
-                    {
-                        net.results.nmn_node [m] += 
-                            net.results1.nmn_node [m];
-                        net.results.nsd_node [m] += 
-                            net.results1.nsd_node [m];
-                    }
-                    net.results.nmn_net += net.results1.nmn_network;
-                    net.results.nsd_net += net.results1.nsd_network;
-                }
-            }
-            if (netcount > 0) 
-            {
-                net.results.conn_mn = net.results.conn_mn / (double) netcount;
-                for (int k=0; k<(nnodes + 1); k++) 
-                {
-                    net.results.nmn_node [k] = net.results.nmn_node [k] / 
-                        (double) netcount;
-                    net.results.nsd_node [k] = net.results.nsd_node [k] / 
-                        (double) netcount;
-                }
-                net.results.nmn_net = net.results.nmn_net / (double) netcount;
-                net.results.nsd_net = net.results.nsd_net / (double) netcount;
-            } else {
-                net.results.conn_mn = DOUBLE_MIN;
-                for (int k=0; k<(nnodes + 1); k++) 
-                {
-                    net.results.nmn_node [k] = DOUBLE_MIN;
-                    net.results.nsd_node [k] = DOUBLE_MIN;
-                }
-                net.results.nmn_net = DOUBLE_MIN;
-                net.results.nsd_net = DOUBLE_MIN;
-            }
+            net.results.nmn_net = net.results1.nmn_network;
+            net.results.nsd_net = net.results1.nsd_network;
+
             out_file << ",\t" << net.results.conn_mn;
             for (int k=0; k<(nnodes + 1); k++) 
                 out_file << ",\t" << net.results.nmn_node [k];
@@ -253,100 +227,6 @@ int main (int argc, char *argv[])
 
 
 
-/************************************************************************
- ************************************************************************
- **                                                                    **
- **                          FILL_ALPHA                                **
- **                                                                    **
- ************************************************************************
- ************************************************************************/
-
-void Net4::fill_alpha (base_generator_type * generator)
-{
-    // generator is passed so same class can be used as in full version, yet
-    // generator is simply not used here.
-    int nnodes = get_nnodes ();
-    double tempd;
-
-    k0.resize (nnodes);
-
-    for (int i=0; i<nnodes; i++) 
-    {
-        k0 (i) = pars.k0;
-        for (int j=0; j<nnodes; j++)
-            alpha (i, j) = 0.0;
-    }
-
-    // First set up connectivities, which obviously has to explicitly assume
-    // that nnodes = 4!
-    std::vector <std::pair <int, int> > connlist;
-    if (network_type == 0) 
-    {
-        /*
-         * 	0---1---2---3
-         */
-        connlist.push_back (std::pair <int, int> (0, 1));
-        connlist.push_back (std::pair <int, int> (1, 0));
-        connlist.push_back (std::pair <int, int> (1, 2));
-        connlist.push_back (std::pair <int, int> (2, 1));
-        connlist.push_back (std::pair <int, int> (2, 3));
-        connlist.push_back (std::pair <int, int> (3, 2));
-    } else if (network_type == 1) {
-        /*
-         *	    3
-         *	    |
-         *	    2
-         *	   / \
-         *	  0   1
-         */
-        connlist.push_back (std::pair <int, int> (0, 2));
-        connlist.push_back (std::pair <int, int> (2, 0));
-        connlist.push_back (std::pair <int, int> (1, 2));
-        connlist.push_back (std::pair <int, int> (2, 1));
-        connlist.push_back (std::pair <int, int> (2, 3));
-        connlist.push_back (std::pair <int, int> (3, 2));
-    } else if (network_type == 2) {
-        /*
-         * 	2---3
-         * 	|   |
-         * 	0---1
-         */
-        connlist.push_back (std::pair <int, int> (0, 1));
-        connlist.push_back (std::pair <int, int> (1, 0));
-        connlist.push_back (std::pair <int, int> (1, 3));
-        connlist.push_back (std::pair <int, int> (3, 1));
-        connlist.push_back (std::pair <int, int> (2, 3));
-        connlist.push_back (std::pair <int, int> (3, 2));
-        connlist.push_back (std::pair <int, int> (0, 2));
-        connlist.push_back (std::pair <int, int> (2, 0));
-    } else if (network_type == 3) {
-        /*
-         * 	     3
-         * 	     |
-         * 	     2
-         * 	    / \
-         * 	   0---1
-         */
-        connlist.push_back (std::pair <int, int> (0, 2));
-        connlist.push_back (std::pair <int, int> (2, 0));
-        connlist.push_back (std::pair <int, int> (1, 2));
-        connlist.push_back (std::pair <int, int> (2, 1));
-        connlist.push_back (std::pair <int, int> (2, 3));
-        connlist.push_back (std::pair <int, int> (3, 2));
-        connlist.push_back (std::pair <int, int> (0, 1));
-        connlist.push_back (std::pair <int, int> (1, 0));
-    }
-
-    // Then fill the connectivities
-    std::vector <std::pair <int, int> >::const_iterator itr;
-    for (itr = connlist.begin(); itr < connlist.end(); itr++) 
-        alpha (itr -> first, itr -> second) = pars.alpha0;
-    for (int i=0; i<nnodes; i++)
-        alpha (i, i) = 1.0;
-
-    connlist.resize (0);
-}
-
 
 /************************************************************************
  ************************************************************************
@@ -367,17 +247,15 @@ void Net4::make_pmat (base_generator_type * generator)
         /*
          * 	0---1---2---3
          */
-        tempd = pars.k0 + pars.alpha0 * pars.k0 +
-            pars.alpha0 * pars.alpha0 * pars.k0 +
-            pars.alpha0 * pars.alpha0 * pars.alpha0 * pars.k0;
-        pmat (0, 0) = pmat (3, 3) = pars.k0 / tempd;
+        tempd = 1.0 + pars.alpha0 + pars.alpha0 * pars.alpha0 +
+            pars.alpha0 * pars.alpha0 * pars.alpha0;
+        pmat (0, 0) = pmat (3, 3) = 1.0 / tempd;
         pmat (0, 1) = pmat (3, 2) = pars.alpha0 * pmat (0,0);
         pmat (0, 2) = pmat (3, 1) = pars.alpha0 * pmat (0,1);
-        pmat (0, 3) = pmat (3, 0) = pars.alpha0 * pmat (0,3);
+        pmat (0, 3) = pmat (3, 0) = pars.alpha0 * pmat (0,2);
 
-        tempd = pars.k0 + 2.0 * pars.alpha0 * pars.k0 +
-            pars.alpha0 * pars.alpha0 * pars.k0;
-        pmat (1, 1) = pmat (2, 2) = pars.k0 / tempd;
+        tempd = 1.0 + 2.0 * pars.alpha0 + pars.alpha0 * pars.alpha0;
+        pmat (1, 1) = pmat (2, 2) = 1.0 / tempd;
         pmat (1, 0) = pmat (2, 3) = pars.alpha0 * pmat (1, 1);
         pmat (1, 2) = pmat (2, 1) = pars.alpha0 * pmat (1, 1);
         pmat (1, 3) = pmat (2, 0) = pars.alpha0 * pmat (1, 0);
@@ -389,15 +267,15 @@ void Net4::make_pmat (base_generator_type * generator)
          *	   / \
          *	  0   1
          */
-        tempd = pars.k0 + pars.alpha0 * pars.k0 +
-            2.0 * pars.alpha0 * pars.alpha0 * pars.k0;
-        pmat (0, 0) = pmat (1, 1) = pmat (3, 3) = pars.k0 / tempd;
+        tempd = 1.0 + pars.alpha0 + 2.0 * pars.alpha0 * pars.alpha0;
+        pmat (0, 0) = pmat (1, 1) = pmat (3, 3) = 1.0 / tempd;
         pmat (0, 2) = pmat (1, 2) = pmat (3, 2) = pars.alpha0 * pmat (0, 0);
         pmat (0, 1) = pmat (1, 0) = pars.alpha0 * pmat (0, 2);
         pmat (0, 3) = pmat (3, 0) = pmat (0, 1);
+        pmat (1, 3) = pmat (3, 1) = pmat (0, 1);
 
-        tempd = pars.k0 + 3.0 * pars.alpha0 * pars.k0;
-        pmat (2, 2) = pars.k0 / tempd;
+        tempd = 1.0 + 3.0 * pars.alpha0;
+        pmat (2, 2) = 1.0 / tempd;
         pmat (2, 0) = pmat (2, 1) = pmat (2, 3) = pars.alpha0 * pmat (2, 2);
     } else if (network_type == 2) {
         /*
@@ -405,9 +283,8 @@ void Net4::make_pmat (base_generator_type * generator)
          * 	|   |
          * 	0---1
          */
-        tempd = pars.k0 + 2.0 * pars.alpha0 * pars.k0 +
-            pars.alpha0 * pars.alpha0 * pars.k0;
-        pmat (0, 0) = pmat (1, 1) = pmat (2, 2) = pmat (3, 3) = pars.k0 / tempd;
+        tempd = 1.0 + 2.0 * pars.alpha0 + pars.alpha0 * pars.alpha0;
+        pmat (0, 0) = pmat (1, 1) = pmat (2, 2) = pmat (3, 3) = 1.0 / tempd;
         pmat (0, 1) = pmat (0, 2) = pars.alpha0 * pmat (0, 0);
         pmat (1, 0) = pmat (1, 3) = pmat (2, 0) = pmat (2, 3) = pmat (0, 1);
         pmat (3, 2) = pmat (3, 1) = pmat (0, 1);
@@ -421,19 +298,18 @@ void Net4::make_pmat (base_generator_type * generator)
          * 	    / \
          * 	   0---1
          */
-        tempd = pars.k0 + 2.0 * pars.alpha0 * pars.k0 +
-            pars.alpha0 * pars.alpha0 * pars.k0;
-        pmat (0, 0) = pars.k0 / tempd;
+        tempd = 1.0 + 2.0 * pars.alpha0 + pars.alpha0 * pars.alpha0;
+        pmat (0, 0) = pmat (1, 1) = 1.0 / tempd;
         pmat (0, 1) = pmat (0, 2) = pars.alpha0 * pmat (0, 0);
         pmat (1, 0) = pmat (1, 2) = pmat (0, 1);
+        pmat (0, 3) = pmat (1, 3) = pars.alpha0 * pmat (0, 1);
 
-        tempd = pars.k0 + 3.0 * pars.alpha0 * pars.k0;
-        pmat (2, 2) = pars.k0 / tempd;
+        tempd = 1.0 + 3.0 * pars.alpha0;
+        pmat (2, 2) = 1.0 / tempd;
         pmat (2, 0) = pmat (2, 1) = pmat (2, 3) = pars.alpha0 * pmat (2, 2);
 
-        tempd = pars.k0 + pars.alpha0 * pars.k0 +
-            2.0 * pars.alpha0 * pars.alpha0 * pars.k0;
-        pmat (3, 3) = pars.k0 / tempd;
+        tempd = 1.0 + pars.alpha0 + 2.0 * pars.alpha0 * pars.alpha0;
+        pmat (3, 3) = 1.0 / tempd;
         pmat (3, 2) = pars.alpha0 * pmat (3, 3);
         pmat (3, 1) = pmat (3, 0) = pars.alpha0 * pmat (3, 2);
     } // end if network type == 3
@@ -447,7 +323,7 @@ void Net4::make_pmat (base_generator_type * generator)
     // little difference between the different networks. The value of 0.1 is a
     // random guess of a value that might enhance movement sufficiently to
     // reveal some stronger differences.
-    double pscale = 0.1 * pars.r;
+    double pscale = 2.0 * pars.r;
     for (int i=0; i<nnodes; i++) 
         pmat (i, i) = 1.0 - pscale * (1.0 - pmat (i, i));
     for (int i=0; i<(nnodes - 1); i++) 

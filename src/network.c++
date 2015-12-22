@@ -130,6 +130,7 @@ void Network::iterate_population (base_generator_type * generator, int nnodes)
         for (int i=0; i<(nnodes - 1); i++)
             for (int j=(i+1); j<nnodes; j++)
                 results1.cov (i, j) = 0.0;
+
         for (int i=0; i<(runin + pars.nTrials); i++) 
         {
             // Movement through network
@@ -143,7 +144,8 @@ void Network::iterate_population (base_generator_type * generator, int nnodes)
             for (int j=0; j<nnodes; j++) 
             {
                 kvals [j] = k0 [j] + pars.ksd * rnorm ();
-                while (kvals [j] < minqc || kvals [j] > (1.0 - minqc))
+                while (kvals [j] < minqc || 
+                        kvals [j] > (2.0 * k0 [j] - minqc))
                     kvals [j] = k0 [j] + pars.ksd * rnorm ();
             }
             // Population dynamic

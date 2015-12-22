@@ -379,6 +379,13 @@ void Net4::make_pmat (base_generator_type * generator)
         /*
          * 	0---1---2---3
          */
+        assert (alpha (0, 1) > minqc);
+        assert (alpha (1, 0) > minqc);
+        assert (alpha (1, 2) > minqc);
+        assert (alpha (2, 1) > minqc);
+        assert (alpha (2, 3) > minqc);
+        assert (alpha (3, 2) > minqc);
+
         tempd = k0 [0] + alpha (0, 1) * k0 [1] + 
             alpha (0, 1) * alpha (1, 2) * k0 [2] +
             alpha (0, 1) * alpha (1, 2) * alpha (2, 3) * k0 [3];
@@ -418,6 +425,13 @@ void Net4::make_pmat (base_generator_type * generator)
          *	   / \
          *	  0   1
          */
+        assert (alpha (0, 2) > minqc);
+        assert (alpha (2, 0) > minqc);
+        assert (alpha (1, 2) > minqc);
+        assert (alpha (2, 1) > minqc);
+        assert (alpha (2, 3) > minqc);
+        assert (alpha (3, 2) > minqc);
+
         tempd = k0 [0] + alpha (0, 2) * k0 [2] + 
             alpha (0, 2) * alpha (2, 1) * k0 [1] +
             alpha (0, 2) * alpha (2, 3) * k0 [3];
@@ -453,8 +467,18 @@ void Net4::make_pmat (base_generator_type * generator)
          * 	2---3
          * 	|   |
          * 	0---1
-         *
-         ********* node 0 **********/
+         */
+
+        assert (alpha (0, 1) > minqc);
+        assert (alpha (1, 0) > minqc);
+        assert (alpha (0, 2) > minqc);
+        assert (alpha (2, 0) > minqc);
+        assert (alpha (1, 3) > minqc);
+        assert (alpha (3, 1) > minqc);
+        assert (alpha (2, 3) > minqc);
+        assert (alpha (3, 2) > minqc);
+
+         //********* node 0 **********
         if ((alpha (0, 2) * alpha (2, 3) * alpha (3, 1)) > alpha (0, 1)) 
         {
             tempd = k0 [0] + alpha (0, 2) * k0 [2] + 
@@ -629,8 +653,18 @@ void Net4::make_pmat (base_generator_type * generator)
          * 	     2
          * 	    / \
          * 	   0---1
-         *
-         ********* node 0 **********/
+         */
+
+        assert (alpha (0, 1) > minqc);
+        assert (alpha (1, 0) > minqc);
+        assert (alpha (0, 2) > minqc);
+        assert (alpha (2, 0) > minqc);
+        assert (alpha (2, 1) > minqc);
+        assert (alpha (1, 2) > minqc);
+        assert (alpha (2, 3) > minqc);
+        assert (alpha (3, 2) > minqc);
+
+        // ********* node 0 **********
         if ((alpha (0, 2) * alpha (2, 1)) > alpha (0, 1)) 
         {
             tempd = k0 [0] + alpha (0, 2) * alpha (2, 1) * k0 [1] + 
