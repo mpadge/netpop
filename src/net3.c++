@@ -71,8 +71,9 @@ int main (int argc, char *argv[])
 
         boost::program_options::options_description config("Configuration");
         config.add_options()
-            ("nTrials,t", boost::program_options::value <int>
-             (&net.pars.nTrials)->default_value (1000), "Number of trials")
+            ("timeSteps,t", boost::program_options::value <int>
+             (&net.pars.timeSteps)->default_value (1000), 
+             "Number of time steps")
             ("nRepeats,n", boost::program_options::value <int>
              (&net.pars.nRepeats)->default_value (1000), "Number of repeats")
             ("k0sd,s", boost::program_options::value <double>
@@ -123,7 +124,7 @@ int main (int argc, char *argv[])
     int nnodes = net.get_nnodes (); // == 3
     net.get_filename (nnodes);
 
-    std::cout << "nTrials for each alpha = " << net.pars.nTrials <<
+    std::cout << "timeSteps for each alpha = " << net.pars.timeSteps <<
         "; with results averaged over " << net.pars.nRepeats << 
         " repeats." << std::endl;
     std::cout << "k0sd = " << net.pars.k0sd << "; alphasd = " << 

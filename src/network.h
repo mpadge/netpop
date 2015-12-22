@@ -58,7 +58,7 @@ class Network
 
         struct Parameters 
         {
-            int nTrials, nRepeats;
+            int timeSteps, nRepeats;
             double k0, k0sd, ksd, alpha0, alphasd, r;
         };
         Parameters pars;

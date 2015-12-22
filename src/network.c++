@@ -131,7 +131,7 @@ void Network::iterate_population (base_generator_type * generator, int nnodes)
             for (int j=(i+1); j<nnodes; j++)
                 results1.cov (i, j) = 0.0;
 
-        for (int i=0; i<(runin + pars.nTrials); i++) 
+        for (int i=0; i<(runin + pars.timeSteps); i++) 
         {
             // Movement through network
             for (int j=0; j<nnodes; j++) 
@@ -179,26 +179,26 @@ void Network::iterate_population (base_generator_type * generator, int nnodes)
             for (int j=0; j<nnodes; j++)
                 if (nold [j] < 0.0)
                     nold [j] = 0.0;
-        } // end for i over nTrials
+        } // end for i over timeSteps
         if (!flag) 
         {
             for (int j=0; j<nnodes; j++) 
             {
                 results1.nmn_node (j) = results1.nmn_node (j) 
-                    / (double) pars.nTrials;
+                    / (double) pars.timeSteps;
                 results1.nsd_node (j) = results1.nsd_node (j) / 
-                    (double) pars.nTrials -
+                    (double) pars.timeSteps -
                     results1.nmn_node (j) * results1.nmn_node (j);
             }
             for (int j=0; j<(nnodes - 1); j++)
                 for (int k=(j+1); k<nnodes; k++)
                     results1.cov (j, k) = results1.cov (j, k) / 
-                        (double) pars.nTrials -
+                        (double) pars.timeSteps -
                         results1.nmn_node (j) * results1.nmn_node (k);
         } else { 
             count++;
         }
-        if (count >= pars.nTrials) 
+        if (count >= pars.timeSteps) 
         {
             flag = false;
             bigflag = true;	
@@ -223,8 +223,8 @@ void Network::iterate_population (base_generator_type * generator, int nnodes)
         }
         results1.nmn_node (nnodes) = results1.nmn_node (nnodes) / (double) nnodes;
         results1.nsd_node (nnodes) = results1.nsd_node (nnodes) / (double) nnodes;
-        results1.nmn_network = results1.nmn_network  / (double) pars.nTrials;
-        results1.nsd_network = results1.nsd_network / (double) pars.nTrials -
+        results1.nmn_network = results1.nmn_network  / (double) pars.timeSteps;
+        results1.nsd_network = results1.nsd_network / (double) pars.timeSteps -
             results1.nmn_network * results1.nmn_network;
         results1.nmn_network = results1.nmn_network / (double) nnodes;
         // So it's on the same scale as nodal abundance.

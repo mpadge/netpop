@@ -65,6 +65,7 @@
 
 int main (int argc, char *argv[])
 {
+    int netcount;
     double tempd, progress;
     std::string tempstr; // for simple timeout for non-linux systems
     Net4 net;
@@ -84,8 +85,11 @@ int main (int argc, char *argv[])
         // random, so the only parameter is nRepeats
         boost::program_options::options_description config("Configuration");
         config.add_options()
-            ("nTrials,n", boost::program_options::value <int>
-             (&net.pars.nTrials)->default_value (1e6), "Number of trials")
+            ("timeSteps,t", boost::program_options::value <int>
+             (&net.pars.timeSteps)->default_value (1e4), 
+             "Number of time steps")
+            ("nRepeats,n", boost::program_options::value <int>
+             (&net.pars.nRepeats)->default_value (100), "Number of repeats")
             ("r,r", boost::program_options::value <double>
              (&net.pars.r)->default_value (0.1), "Growth rate, r")
             ("ksd,k", boost::program_options::value <double>
@@ -127,8 +131,9 @@ int main (int argc, char *argv[])
         std::cout << e.what() << std::endl;
         return 1;
     }    
-    std::cout << "nTrials for each alpha = " << net.pars.nTrials << 
-        "; with ksd = " << net.pars.ksd << std::endl;
+    std::cout << "timeSteps for each alpha = " << net.pars.timeSteps << 
+        "; with " << net.pars.nRepeats << " repeats and ksd = " << 
+        net.pars.ksd << std::endl;
 
     int nnodes = net.get_nnodes (); // == 4
 
@@ -187,19 +192,57 @@ int main (int argc, char *argv[])
         out_file << net.pars.alpha0;
         for (net.network_type = 0; net.network_type<4; net.network_type++)
         {
-            net.make_pmat (&generator);
-            net.iterate_population (&generator, nnodes);
-
-            assert (net.results1.nmn_network > DOUBLE_MIN);
-            
-            net.results.conn_mn = net.results1.connectivity;
-            for (int j=0; j<(nnodes + 1); j++) 
+            for (int k=0; k<(nnodes + 1); k++) 
             {
-                net.results.nmn_node [j] = net.results1.nmn_node [j];
-                net.results.nsd_node [j] = net.results1.nsd_node [j];
+                net.results.nmn_node [k] = 0.0;
+                net.results.nsd_node [k] = 0.0;
             }
-            net.results.nmn_net = net.results1.nmn_network;
-            net.results.nsd_net = net.results1.nsd_network;
+            net.results.nmn_net = 0.0;
+            net.results.nsd_net = 0.0;
+            net.results.conn_mn = 0.0;
+            netcount = 0;
+            for (int k=0; k<net.pars.nRepeats; k++) 
+            {
+                net.make_pmat (&generator);
+                net.iterate_population (&generator, nnodes);
+                if (net.results1.nmn_network > DOUBLE_MIN) 
+                {
+                    netcount++;
+                    net.results.conn_mn += net.results1.connectivity;
+                    for (int m=0; m<(nnodes + 1); m++) 
+                    {
+                        net.results.nmn_node [m] += 
+                            net.results1.nmn_node [m];
+                        net.results.nsd_node [m] += 
+                            net.results1.nsd_node [m];
+                    }
+                    net.results.nmn_net += net.results1.nmn_network;
+                    net.results.nsd_net += net.results1.nsd_network;
+                }
+            }
+
+            if (netcount > 0) 
+            {
+                net.results.conn_mn = net.results.conn_mn / (double) netcount;
+                for (int k=0; k<(nnodes + 1); k++) 
+                {
+                    net.results.nmn_node [k] = net.results.nmn_node [k] / 
+                        (double) netcount;
+                    net.results.nsd_node [k] = net.results.nsd_node [k] / 
+                        (double) netcount;
+                }
+                net.results.nmn_net = net.results.nmn_net / (double) netcount;
+                net.results.nsd_net = net.results.nsd_net / (double) netcount;
+            } else {
+                net.results.conn_mn = DOUBLE_MIN;
+                for (int k=0; k<(nnodes + 1); k++) 
+                {
+                    net.results.nmn_node [k] = DOUBLE_MIN;
+                    net.results.nsd_node [k] = DOUBLE_MIN;
+                }
+                net.results.nmn_net = DOUBLE_MIN;
+                net.results.nsd_net = DOUBLE_MIN;
+            }
 
             out_file << ",\t" << net.results.conn_mn;
             for (int k=0; k<(nnodes + 1); k++) 
