@@ -106,7 +106,7 @@ void Network::iterate_population (base_generator_type * generator, int nnodes)
 
     boost::normal_distribution<> norm_dist (0.0, 1.0);
     boost::variate_generator<base_generator_type&,
-        boost::normal_distribution<> > rnorm((*generator), norm_dist);
+        boost::normal_distribution<> > rnorm ((*generator), norm_dist);
     // Burn generator in
     for (int i=0; i<20; i++) 
         tempd = rnorm();
@@ -115,14 +115,16 @@ void Network::iterate_population (base_generator_type * generator, int nnodes)
     results1.nsd_node.resize (nnodes + 1);
     results1.cov.resize (nnodes, nnodes);
 
+    // flag = true is all nodes go extinct, in which case the population
+    // iteration is repeated.
     while (flag) 
     {
-        for (int j=0; j<nnodes; j++) 
-            nold [j] = k0 [j];
-        for (int j=0; j<(nnodes + 1); j++) 
+        for (int i=0; i<nnodes; i++) 
+            nold [i] = k0 (i);
+        for (int i=0; i<(nnodes + 1); i++) 
         {
-            results1.nmn_node (j) = 0.0;
-            results1.nsd_node (j) = 0.0;
+            results1.nmn_node (i) = 0.0;
+            results1.nsd_node (i) = 0.0;
         }
         results1.nmn_network = 0.0;
         results1.nsd_network = 0.0;
@@ -133,7 +135,7 @@ void Network::iterate_population (base_generator_type * generator, int nnodes)
 
         for (int i=0; i<(runin + pars.timeSteps); i++) 
         {
-            // Movement through network
+            // Movement through network; transforms nold -> n
             for (int j=0; j<nnodes; j++) 
             {
                 n [j] = 0.0;
@@ -148,7 +150,7 @@ void Network::iterate_population (base_generator_type * generator, int nnodes)
                         kvals [j] > (2.0 * k0 [j] - minqc))
                     kvals [j] = k0 [j] + pars.ksd * rnorm ();
             }
-            // Population dynamic
+            // Population dynamic; transforms n -> nold
             tempi = 0;
             for (int j=0; j<nnodes; j++) 
             {
@@ -198,7 +200,7 @@ void Network::iterate_population (base_generator_type * generator, int nnodes)
         } else { 
             count++;
         }
-        if (count >= pars.timeSteps) 
+        if (count >= pars.timeSteps) // extinction occurred every time
         {
             flag = false;
             bigflag = true;	
@@ -214,19 +216,20 @@ void Network::iterate_population (base_generator_type * generator, int nnodes)
         results1.nmn_network = DOUBLE_MIN;
         results1.nsd_network = DOUBLE_MIN;
     } else {
-        results1.nmn_node (nnodes) = 0.0;
-        results1.nsd_node (nnodes) = 0.0;
-        for (int i=0; i<(nnodes + 1); i++) 
+        results1.nmn_node [nnodes] = 0.0;
+        results1.nsd_node [nnodes] = 0.0;
+        for (int i=0; i<nnodes; i++) 
         {
-            results1.nmn_node (nnodes) += results1.nmn_node [i];
-            results1.nsd_node (nnodes) += results1.nsd_node [i];
+            results1.nmn_node [nnodes] += results1.nmn_node [i];
+            results1.nsd_node [nnodes] += results1.nsd_node [i];
         }
-        results1.nmn_node (nnodes) = results1.nmn_node (nnodes) / (double) nnodes;
-        results1.nsd_node (nnodes) = results1.nsd_node (nnodes) / (double) nnodes;
+        results1.nmn_node [nnodes] = results1.nmn_node [nnodes] / (double) nnodes;
+        results1.nsd_node [nnodes] = results1.nsd_node [nnodes] / (double) nnodes;
         results1.nmn_network = results1.nmn_network  / (double) pars.timeSteps;
         results1.nsd_network = results1.nsd_network / (double) pars.timeSteps -
             results1.nmn_network * results1.nmn_network;
         results1.nmn_network = results1.nmn_network / (double) nnodes;
+        results1.nsd_network = results1.nsd_network / (double) nnodes;
         // So it's on the same scale as nodal abundance.
     }
 }

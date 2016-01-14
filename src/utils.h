@@ -57,6 +57,7 @@
 
 #include <boost/program_options.hpp>
 
+#include <boost/random/mersenne_twister.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <boost/random/normal_distribution.hpp>
@@ -64,20 +65,14 @@
 
 #define PI 3.1415926535897932384626433832795
 
-// This is a typedef for a random number generator.
-// Try boost::mt19937 or boost::ecuyer1988 instead of boost::minstd_rand
-typedef boost::minstd_rand base_generator_type;
+// This is a typedef for a mersenne twister generator 
+typedef boost::random::mt19937 base_generator_type;
 
-typedef boost::numeric::ublas::vector<double> dvec;
-typedef boost::numeric::ublas::matrix<double> dmat;
-typedef boost::numeric::ublas::vector<int> ivec;
-typedef boost::numeric::ublas::matrix<int> imat;
-typedef std::vector <double> stdvec;
-
-typedef boost::numeric::ublas::vector <int> ivec;
-typedef boost::numeric::ublas::matrix <int> imat;
 typedef boost::numeric::ublas::vector <double> dvec;
 typedef boost::numeric::ublas::matrix <double> dmat;
+typedef boost::numeric::ublas::vector <int> ivec;
+typedef boost::numeric::ublas::matrix <int> imat;
+typedef std::vector <double> stdvec;
 
 const double DOUBLE_MAX = std::numeric_limits<double>::max (),
       DOUBLE_MIN = -DOUBLE_MAX,

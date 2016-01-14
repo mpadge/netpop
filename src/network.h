@@ -46,7 +46,7 @@
 class Network
 {
     public:
-        static constexpr int maxTrials = 100, runin = 100;
+        static constexpr int runin = 100;
         static constexpr double minqc = 0.001;
         // minqc is important to prevent dividing by sometimes *really* small
         // numbers
@@ -65,8 +65,6 @@ class Network
 
         struct Results1Net
         {
-            //double connectivity, nmn_node [nnodes + 1], nsd_node [nnodes + 1], 
-            //       nmn_network, nsd_network, cov [nnodes] [nnodes];
             double connectivity, nmn_network, nsd_network;
             dvec nmn_node, nsd_node;
             dmat cov;
@@ -78,6 +76,12 @@ class Network
         }
         ~Network ()
         {
+            k0.resize (0);
+            alpha.resize (0, 0);
+            pmat.resize (0, 0);
+            results1.nmn_node.resize (0);
+            results1.nsd_node.resize (0);
+            results1.cov.resize (0, 0);
         }
 
         void get_filename (int nnodes);

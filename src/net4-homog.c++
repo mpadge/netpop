@@ -72,7 +72,8 @@ int main (int argc, char *argv[])
     std::ofstream out_file;
     clock_t time_start;
     time_t seed;
-    base_generator_type generator(42u);
+    //base_generator_type generator(42u);
+    base_generator_type generator;
 
     try {
         boost::program_options::options_description generic("Generic options");
@@ -82,14 +83,14 @@ int main (int argc, char *argv[])
             ;
 
         // The networks are identical, and only the population dynamics remain
-        // random, so the only parameter is nRepeats
+        // random, so the only parameter is timeSteps
         boost::program_options::options_description config("Configuration");
         config.add_options()
             ("timeSteps,t", boost::program_options::value <int>
-             (&net.pars.timeSteps)->default_value (1e4), 
+             (&net.pars.timeSteps)->default_value (1e6), // 1e4
              "Number of time steps")
             ("nRepeats,n", boost::program_options::value <int>
-             (&net.pars.nRepeats)->default_value (100), "Number of repeats")
+             (&net.pars.nRepeats)->default_value (1), "Number of repeats")
             ("r,r", boost::program_options::value <double>
              (&net.pars.r)->default_value (0.1), "Growth rate, r")
             ("ksd,k", boost::program_options::value <double>
@@ -152,15 +153,15 @@ int main (int argc, char *argv[])
     if (net.pars.ksd < 0.1)
         fname += "0";
     ss << round (1000.0 * net.pars.ksd);
-    fname += ss.str () + ".txt";
+    fname += ss.str () + ".txt"; 
 
     time_start = clock ();
 
     // makepmat explicitly presumes k0=1.0 and doesn't use the value, but
     // iterate_population still uses it.
     net.pars.k0 = 1.0; 
-    net.pars.k0sd = 0.0;
-    net.pars.alphasd = 0.0;
+    net.pars.k0sd = 0.0; // Not used
+    net.pars.alphasd = 0.0; // Not used
     net.k0.resize (nnodes);
     for (int i=0; i<nnodes; i++) 
         net.k0 (i) = net.pars.k0;
@@ -186,9 +187,11 @@ int main (int argc, char *argv[])
         "sd3node0,\tsd3node1,\tsd3node2,\tsd3node3,\tsd3node_all,\tmn3net,\t" <<
         "sd3net,\tcov301,\tcov302,\tcov303,\tcov312,\tcov313,\tcov323" << 
         std::endl;
+    //for (int i=0; i<3; i++) 
     for (int i=1; i<=100; i++) 
     {
         net.pars.alpha0 = (double) i / 100.0;
+        //net.pars.alpha0 = (double) i * 0.5;
         out_file << net.pars.alpha0;
         for (net.network_type = 0; net.network_type<4; net.network_type++)
         {
@@ -362,11 +365,11 @@ void Net4::make_pmat (base_generator_type * generator)
     for (int i=0; i<nnodes; i++) 
         results1.connectivity -= pmat (i, i);
     results1.connectivity = results1.connectivity / (double) nnodes;
-    // Then rescale to growth rate. Results from pscale = pars.r show very
-    // little difference between the different networks. The value of 0.1 is a
-    // random guess of a value that might enhance movement sufficiently to
-    // reveal some stronger differences.
-    double pscale = 2.0 * pars.r;
+    // Then rescale to growth rate. The value of 5.0 means that pscale<1 for
+    // r<0.2.
+    double pscale = 5.0 * pars.r;
+    // But these results are just shown for one value of r, so:
+    pscale = 1.0; 
     for (int i=0; i<nnodes; i++) 
         pmat (i, i) = 1.0 - pscale * (1.0 - pmat (i, i));
     for (int i=0; i<(nnodes - 1); i++) 
