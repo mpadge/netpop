@@ -66,7 +66,7 @@
 #define PI 3.1415926535897932384626433832795
 
 // This is a typedef for a mersenne twister generator 
-typedef boost::random::mt19937 base_generator_type;
+typedef boost::mt19937 base_generator_type;
 
 typedef boost::numeric::ublas::vector <double> dvec;
 typedef boost::numeric::ublas::matrix <double> dmat;
