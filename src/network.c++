@@ -100,7 +100,7 @@ void Network::get_filename (int nnodes)
 
 void Network::iterate_population (base_generator_type * generator, int nnodes)
 {
-    int tempi, count = 0;
+    int tempi, count = 0, nreps = 0;
     bool flag = true, bigflag = false;
     double tempd, n [nnodes], nold [nnodes], kvals [nnodes];
 
@@ -163,7 +163,11 @@ void Network::iterate_population (base_generator_type * generator, int nnodes)
             {
                 flag = true;
                 break;
-            } else if (i > runin) {
+            } else if (tempi == 0 && i > runin) {
+                // Only calculate values when no nodes go exinct; otherwise
+                // variances can be anomolously high, ruining the otherwise
+                // smooth patterns. This took bloody days to find!!
+                nreps++;
                 tempd = 0.0;
                 for (int j=0; j<nnodes; j++) 
                 {
@@ -186,16 +190,13 @@ void Network::iterate_population (base_generator_type * generator, int nnodes)
         {
             for (int j=0; j<nnodes; j++) 
             {
-                results1.nmn_node (j) = results1.nmn_node (j) 
-                    / (double) pars.timeSteps;
-                results1.nsd_node (j) = results1.nsd_node (j) / 
-                    (double) pars.timeSteps -
+                results1.nmn_node (j) = results1.nmn_node (j) / (double) nreps;
+                results1.nsd_node (j) = results1.nsd_node (j) / (double) nreps -
                     results1.nmn_node (j) * results1.nmn_node (j);
             }
             for (int j=0; j<(nnodes - 1); j++)
                 for (int k=(j+1); k<nnodes; k++)
-                    results1.cov (j, k) = results1.cov (j, k) / 
-                        (double) pars.timeSteps -
+                    results1.cov (j, k) = results1.cov (j, k) / (double) nreps -
                         results1.nmn_node (j) * results1.nmn_node (k);
         } else { 
             count++;
@@ -225,8 +226,8 @@ void Network::iterate_population (base_generator_type * generator, int nnodes)
         }
         results1.nmn_node [nnodes] = results1.nmn_node [nnodes] / (double) nnodes;
         results1.nsd_node [nnodes] = results1.nsd_node [nnodes] / (double) nnodes;
-        results1.nmn_network = results1.nmn_network  / (double) pars.timeSteps;
-        results1.nsd_network = results1.nsd_network / (double) pars.timeSteps -
+        results1.nmn_network = results1.nmn_network  / (double) nreps;
+        results1.nsd_network = results1.nsd_network / (double) nreps -
             results1.nmn_network * results1.nmn_network;
         results1.nmn_network = results1.nmn_network / (double) nnodes;
         results1.nsd_network = results1.nsd_network / (double) nnodes;
