@@ -128,7 +128,8 @@ int main (int argc, char *argv[])
         "; with results averaged over " << net.pars.nRepeats << 
         " repeats." << std::endl;
     std::cout << "k0sd = " << net.pars.k0sd << "; alphasd = " << 
-        net.pars.alphasd << "; ksd = " << net.pars.ksd << std::endl;
+        net.pars.alphasd << "; ksd = " << net.pars.ksd << 
+        "; r = " << net.pars.r << std::endl;
 
     time_start = clock ();
 
@@ -309,8 +310,8 @@ void Net3::make_pmat (base_generator_type * generator)
     for (int i=0; i<nnodes; i++) 
         results1.connectivity -= pmat (i, i);
     results1.connectivity = results1.connectivity / (double) nnodes;
-    // Then rescale to growth rate 
-    double pscale = pars.r;
+    // Then rescale to growth rate, with r=0.1 -> pscale = 1
+    double pscale = 10.0 * pars.r;
     for (int i=0; i<nnodes; i++) 
         pmat (i, i) = 1.0 - pscale * (1.0 - pmat (i, i));
     for (int i=0; i<(nnodes - 1); i++) 
