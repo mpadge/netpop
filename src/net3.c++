@@ -311,7 +311,7 @@ void Net3::make_pmat (base_generator_type * generator)
         results1.connectivity -= pmat (i, i);
     results1.connectivity = results1.connectivity / (double) nnodes;
     // Then rescale to growth rate, with r=0.1 -> pscale = 1
-    double pscale = 10.0 * pars.r;
+    double pscale = 0.5 * pars.r;
     for (int i=0; i<nnodes; i++) 
         pmat (i, i) = 1.0 - pscale * (1.0 - pmat (i, i));
     for (int i=0; i<(nnodes - 1); i++) 
