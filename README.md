@@ -7,6 +7,11 @@ simulations. Three-node networks are triangular; there are four different
 four-node networks; and there are two different kinds of 25-node networks:
 dendritic and lattice, with their own separate routines.
 
+### NOTE:
+
+These are the final versions used to produce the figures for initial submission
+(24th Feb, 2016) - commit#5ec4c1c
+
 ### build:
 1. cd ./build  
 2. cmake ..  
